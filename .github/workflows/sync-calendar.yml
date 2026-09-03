@@ -18,6 +18,9 @@ jobs:
         env:
           GCAL_API_KEY: ${{ secrets.GCAL_API_KEY }}
           GCAL_CALENDAR_ID: ${{ secrets.GCAL_CALENDAR_ID }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
         run: node .github/scripts/sync-calendar.js
 
       - name: Commit if changed
