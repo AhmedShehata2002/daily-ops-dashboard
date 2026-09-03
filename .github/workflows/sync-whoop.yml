@@ -24,7 +24,7 @@ jobs:
       - name: Rotate refresh token if changed
         if: always()
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_PAT }}
+          GH_TOKEN: ${{ secrets.BOT_PAT }}
         run: |
           if [ -f /tmp/new_whoop_refresh_token ]; then
             NEW=$(cat /tmp/new_whoop_refresh_token)

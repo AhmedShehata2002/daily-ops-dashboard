@@ -77,7 +77,7 @@ const req = https.request('https://api.prod.whoop.com/oauth/oauth2/token', {
     console.log(`gh secret set WHOOP_REFRESH_TOKEN --body "${d.refresh_token}" --repo AhmedShehata2002/daily-ops-dashboard`);
     console.log(`\n# Also set GITHUB_PAT (classic PAT with repo+workflow scopes) so the`);
     console.log(`# workflow can auto-rotate the refresh token:`);
-    console.log(`gh secret set GITHUB_PAT --body "YOUR_PAT_HERE" --repo AhmedShehata2002/daily-ops-dashboard`);
+    console.log(`gh secret set BOT_PAT --body "YOUR_PAT_HERE" --repo AhmedShehata2002/daily-ops-dashboard`);
     console.log('\nThen trigger the sync-whoop workflow manually to verify data is syncing.\n');
   });
 });
