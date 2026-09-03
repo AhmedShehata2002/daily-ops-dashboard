@@ -1,0 +1,57 @@
+{
+  "today": [
+    { "label": "Review FRA: NPV & IRR", "done": true },
+    { "label": "CFA – Ethics practice (30 Qs)", "done": false },
+    { "label": "Study Derivatives (MCQs)", "done": false },
+    { "label": "MSc: Regression assignment", "done": false },
+    { "label": "AEROME: Study Chapter 3", "done": false },
+    { "label": "Read 20 pages", "done": false }
+  ],
+  "cfa": {
+    "percent": 37,
+    "topic": "Fixed Income",
+    "progressText": "1h 12m / 1h 30m",
+    "next": "Derivatives"
+  },
+  "steps": {
+    "current": 6257,
+    "goal": 10000,
+    "bars": [4,7,3,8,6,9,5,7,8,4,6,9,7,5,8,6,9,4,7,8,5,6,9,7]
+  },
+  "calendar": [
+    { "time": "09:00", "label": "Work" },
+    { "time": "13:30", "label": "Lunch" },
+    { "time": "18:00", "label": "Gym" },
+    { "time": "20:30", "label": "CFA Study" },
+    { "time": "22:00", "label": "Wind down" }
+  ],
+  "projects": [
+    { "name": "CFA Level I", "pct": 37 },
+    { "name": "MSc Data Science", "pct": 58 },
+    { "name": "AEROME", "pct": 41 },
+    { "name": "Reading", "pct": 66 },
+    { "name": "Admin", "pct": 75 }
+  ],
+  "health": {
+    "weight": 128.9,
+    "unit": "KG",
+    "deltaKg": -4.1,
+    "deltaLabel": "VS 25 AUG",
+    "startLabel": "25 AUG",
+    "endLabel": "01 SEP",
+    "trend": [133, 132.4, 131.8, 131.5, 130.9, 130.3, 129.8, 129.4, 128.9]
+  },
+  "upNext": [
+    { "title": "CFA Mock Exam", "inDays": 2 },
+    { "title": "MSc Assignment Due", "inDays": 5 },
+    { "title": "AEROME Quiz", "inDays": 6 },
+    { "title": "Review Session", "fixedLabel": "Sun 18:00" },
+    { "title": "Grocery Run", "fixedLabel": "Sun 11:00" }
+  ],
+  "weekly": {
+    "days": ["M","T","W","T","F","S","S"],
+    "study": [2.1, 1.9, 2.6, 2.4, 3.0, 1.2, 0.8],
+    "steps": [6.2, 7.1, 8.3, 6.7, 9.4, 5.2, 3.1],
+    "focus": [78, 82, 88, 84, 91, 76, 65]
+  }
+}

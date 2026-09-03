@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Daily Ops">
+<title>Daily Ops</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0a;
+    --card-bg:#0c0c0c;
+    --border:#232323;
+    --border-soft:#1a1a1a;
+    --text-1:#f2f1ec;
+    --text-2:#8a8a86;
+    --text-3:#4d4d4a;
+    --dot-empty:#242422;
+    --dot-fill:#f2f1ec;
+    --radius:18px;
+    --font-mono:'JetBrains Mono', ui-monospace, monospace;
+    --font-dot:'Silkscreen', var(--font-mono);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{
+    margin:0; padding:0; height:100%; background:var(--bg); color:var(--text-1);
+    font-family:var(--font-mono); overflow:hidden; overscroll-behavior:none; user-select:none;
+  }
+  .app{ display:flex; height:100vh; width:100vw; }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{
+    width:64px; flex-shrink:0; display:flex; flex-direction:column; align-items:center;
+    padding:26px 0; gap:8px; border-right:1px solid var(--border-soft);
+  }
+  .sidebar .grid-icon{ color:var(--text-2); margin-bottom:26px; }
+  .side-btn{
+    width:40px; height:40px; display:flex; align-items:center; justify-content:center;
+    border-radius:12px; color:var(--text-3);
+  }
+  .side-btn.active{ background:#1c1c1a; color:var(--text-1); }
+  .sidebar .spacer{ flex:1; }
+  .sidebar .avatar{ width:22px; height:22px; border-radius:50%; border:1.5px solid var(--text-3); }
+
+  /* ---------- Main ---------- */
+  .main{ flex:1; min-width:0; padding:28px 34px 20px; display:flex; flex-direction:column; gap:20px; }
+
+  .header-top{ display:flex; justify-content:space-between; align-items:center; }
+  .brand{ font-size:12px; letter-spacing:3px; color:var(--text-2); }
+  .status-icons{ display:flex; align-items:center; gap:10px; color:var(--text-2); font-size:13px; }
+
+  .header-main{ display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:4px; }
+  .clock{ display:flex; align-items:baseline; gap:12px; }
+  .clock-time{ font-family:var(--font-dot); font-size:64px; line-height:1; letter-spacing:2px; }
+  .clock-ampm{ font-size:16px; color:var(--text-2); letter-spacing:1px; }
+
+  .header-right{ display:flex; align-items:center; gap:22px; }
+  .date-text{ font-size:14px; color:var(--text-2); letter-spacing:1px; white-space:nowrap; }
+  .weather{ display:flex; align-items:center; gap:10px; }
+  .weather-temp{ font-size:26px; }
+  .weather-city{ font-size:11px; color:var(--text-2); letter-spacing:1px; margin-top:-2px; }
+
+  /* ---------- Grid ---------- */
+  .grid{
+    flex:1; display:grid; grid-template-columns:repeat(3, 1fr); grid-template-rows:repeat(3, 1fr);
+    gap:16px; min-height:0;
+  }
+  .card{
+    background:var(--card-bg); border:1px solid var(--border); border-radius:var(--radius);
+    padding:18px 20px; display:flex; flex-direction:column; min-height:0; overflow:hidden;
+  }
+  .card-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+  .card-title{ display:flex; align-items:center; gap:8px; font-size:12.5px; letter-spacing:1.6px; color:var(--text-1); }
+  .card-title .ring{ width:12px; height:12px; border-radius:50%; border:1.4px solid var(--text-2); position:relative; flex-shrink:0; }
+  .card-title .ring::after{ content:""; position:absolute; inset:3px; border-radius:50%; background:var(--text-2); }
+  .card-menu{ color:var(--text-3); font-size:16px; letter-spacing:2px; }
+  .card-sub{ font-size:10.5px; color:var(--text-3); letter-spacing:1px; margin:-2px 0 8px 20px; }
+
+  /* Today */
+  .task-row{ display:flex; align-items:center; gap:11px; padding:6px 0; font-size:13px; }
+  .checkbox{ width:15px; height:15px; border-radius:4px; border:1.4px solid var(--text-3); flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .checkbox.checked{ background:var(--text-1); border-color:var(--text-1); }
+  .checkbox.checked svg{ width:9px; height:9px; }
+  .task-row.done .task-label{ color:var(--text-3); text-decoration:line-through; }
+  .task-list{ flex:1; overflow:hidden; }
+  .add-task{ display:flex; align-items:center; gap:11px; padding-top:9px; margin-top:6px; border-top:1px solid var(--border-soft); font-size:13px; color:var(--text-2); }
+
+  /* CFA */
+  .cfa-body{ display:flex; align-items:center; gap:26px; flex:1; }
+  .cfa-info{ display:flex; flex-direction:column; gap:14px; font-size:12.5px; }
+  .cfa-label{ color:var(--text-3); letter-spacing:1px; font-size:10.5px; margin-bottom:3px; }
+  .cfa-value{ color:var(--text-1); font-size:14px; }
+
+  /* Steps */
+  .steps-bars{ display:flex; align-items:flex-end; gap:3px; height:70px; margin-bottom:16px; }
+  .steps-bar{ flex:1; background-image:radial-gradient(circle, var(--dot-fill) 1px, transparent 1.4px); background-size:100% 5px; }
+  .steps-big{ font-size:30px; }
+  .steps-goal-num{ color:var(--text-2); font-size:20px; }
+  .steps-sub{ font-size:11px; color:var(--text-2); margin-top:2px; }
+
+  /* Calendar */
+  .cal-row{ display:flex; align-items:center; gap:12px; padding:6px 0; font-size:13px; }
+  .cal-time{ color:var(--text-2); width:44px; flex-shrink:0; }
+  .cal-dot{ width:6px; height:6px; border-radius:50%; background:var(--text-3); flex-shrink:0; }
+  .cal-footer{ display:flex; justify-content:space-between; align-items:center; padding-top:9px; margin-top:auto; border-top:1px solid var(--border-soft); font-size:12px; color:var(--text-2); }
+
+  /* Projects */
+  .proj-row{ display:flex; align-items:center; justify-content:space-between; padding:7px 0; font-size:13px; gap:10px; }
+  .proj-name{ flex-shrink:0; }
+  .proj-dots{ display:flex; gap:3.5px; flex:1; justify-content:center; }
+  .proj-dot{ width:5px; height:5px; border-radius:50%; background:var(--dot-empty); }
+  .proj-dot.on{ background:var(--dot-fill); }
+  .proj-pct{ color:var(--text-2); width:32px; text-align:right; flex-shrink:0; }
+
+  /* Health */
+  .health-top{ display:flex; align-items:baseline; gap:8px; }
+  .health-label{ font-size:10.5px; color:var(--text-3); letter-spacing:1px; }
+  .health-num{ font-size:30px; margin-top:2px; }
+  .health-unit{ font-size:13px; color:var(--text-2); }
+  .health-delta{ font-size:11.5px; color:var(--text-2); margin-top:6px; }
+  .health-body{ display:flex; align-items:flex-end; gap:16px; flex:1; margin-top:6px; }
+  .health-chart-wrap{ flex:1; }
+  .health-axis{ display:flex; justify-content:space-between; font-size:9.5px; color:var(--text-3); margin-top:4px; }
+
+  /* Up next */
+  .up-row{ display:flex; align-items:center; justify-content:space-between; padding:7px 0; font-size:13px; }
+  .up-left{ display:flex; align-items:center; gap:10px; }
+  .up-right{ color:var(--text-2); font-size:12px; flex-shrink:0; }
+
+  /* Weekly overview */
+  .card-weekly{ grid-column:span 2; }
+  .weekly-body{ display:flex; flex:1; min-height:0; }
+  .weekly-panel{ flex:1; display:flex; flex-direction:column; padding:0 16px; }
+  .weekly-panel:not(:first-child){ border-left:1px solid var(--border-soft); }
+  .weekly-panel:first-child{ padding-left:0; }
+  .weekly-title{ font-size:10px; color:var(--text-3); letter-spacing:1px; margin-bottom:10px; }
+  .weekly-chart{ display:flex; align-items:flex-end; gap:5px; flex:1; }
+  .weekly-col{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; gap:5px; height:100%; }
+  .weekly-val{ font-size:9.5px; color:var(--text-2); }
+  .weekly-bar{ width:100%; background:var(--text-1); border-radius:2px 2px 0 0; opacity:0.85; }
+  .weekly-day{ font-size:9.5px; color:var(--text-3); margin-top:4px; }
+
+  svg{ display:block; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="sidebar">
+    <svg class="grid-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <g fill="currentColor"><circle cx="2" cy="2" r="1.4"/><circle cx="9" cy="2" r="1.4"/><circle cx="16" cy="2" r="1.4"/>
+      <circle cx="2" cy="9" r="1.4"/><circle cx="9" cy="9" r="1.4"/><circle cx="16" cy="9" r="1.4"/>
+      <circle cx="2" cy="16" r="1.4"/><circle cx="9" cy="16" r="1.4"/><circle cx="16" cy="16" r="1.4"/></g>
+    </svg>
+    <div class="side-btn active">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+    </div>
+    <div class="side-btn">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3h12v18l-6-4-6 4V3z"/></svg>
+    </div>
+    <div class="side-btn">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+    </div>
+    <div class="side-btn">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/></svg>
+    </div>
+    <div class="side-btn">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.9 2.9l-.1-.1a1.7 1.7 0 00-1.9-.3 1.7 1.7 0 00-1 1.6V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1-1.6 1.7 1.7 0 00-1.9.3l-.1.1a2 2 0 11-2.9-2.9l.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.6-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.6-1 1.7 1.7 0 00-.3-1.9l-.1-.1a2 2 0 112.9-2.9l.1.1a1.7 1.7 0 001.9.3H9a1.7 1.7 0 001-1.6V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.6 1.7 1.7 0 001.9-.3l.1-.1a2 2 0 112.9 2.9l-.1.1a1.7 1.7 0 00-.3 1.9V9a1.7 1.7 0 001.6 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.6 1z"/></svg>
+    </div>
+    <div class="spacer"></div>
+    <div class="avatar"></div>
+  </div>
+
+  <div class="main">
+
+    <div class="header-top">
+      <div class="brand">DAILY OPS</div>
+      <div class="status-icons">
+        <svg width="15" height="12" viewBox="0 0 24 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 8a17 17 0 0120 0M6 12a11 11 0 0112 0M10 16a5 5 0 014 0"/></svg>
+        <span id="battery-pct">82%</span>
+        <svg width="20" height="12" viewBox="0 0 26 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="21" height="12" rx="2.5"/><rect x="23" y="4.5" width="2" height="5" rx="1" fill="currentColor" stroke="none"/><rect x="3" y="3" width="15" height="8" rx="1" fill="currentColor" stroke="none" opacity="0.85"/></svg>
+      </div>
+    </div>
+
+    <div class="header-main">
+      <div class="clock">
+        <span class="clock-time" id="clock-time">--:--</span>
+        <span class="clock-ampm" id="clock-ampm">--</span>
+      </div>
+      <div class="header-right">
+        <div class="date-text" id="date-text">---, -- ---</div>
+        <div class="weather">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--text-2)" stroke-width="1.5" id="weather-icon"><path d="M7 18a4 4 0 010-8 5 5 0 019.6-1.5A4 4 0 0118 18H7z"/></svg>
+          <div>
+            <div class="weather-temp" id="weather-temp">--°</div>
+            <div class="weather-city">CAIRO</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+
+      <!-- TODAY -->
+      <div class="card" id="card-today">
+        <div class="card-head">
+          <div class="card-title"><span class="ring"></span>TODAY</div>
+          <div class="card-menu">⋮</div>
+        </div>
+        <div class="card-sub">SYNCED FROM REMINDERS</div>
+        <!-- DATA SOURCE: Apple Reminders / Todoist API -> written into DASHBOARD_DATA.today on refresh -->
+        <div class="task-list" id="task-list"></div>
+        <div class="add-task">+ &nbsp;Add task</div>
+      </div>
+
+      <!-- CFA -->
+      <div class="card" id="card-cfa">
+        <div class="card-head">
+          <div class="card-title"><span class="ring"></span>CFA LEVEL I</div>
+          <div class="card-menu">⋮</div>
+        </div>
+        <!-- DATA SOURCE: your own CFA study app's progress export -->
+        <div class="cfa-body">
+          <svg id="cfa-ring" width="130" height="130" viewBox="0 0 130 130"></svg>
+          <div class="cfa-info">
+            <div><div class="cfa-label">THIS TOPIC</div><div class="cfa-value" id="cfa-topic">—</div></div>
+            <div><div class="cfa-label">PROGRESS</div><div class="cfa-value" id="cfa-progress">—</div></div>
+            <div><div class="cfa-label">NEXT</div><div class="cfa-value" id="cfa-next">—</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEPS -->
+      <div class="card" id="card-steps">
+        <div class="card-head">
+          <div class="card-title"><span class="ring"></span>STEPS</div>
+          <div class="card-menu">⋮</div>
+        </div>
+        <!-- DATA SOURCE: Apple Health, via Health Auto Export -->
+        <div class="steps-bars" id="steps-bars"></div>
+        <div><span class="steps-big" id="steps-current">—</span> <span class="steps-goal-num">/ <span id="steps-goal">—</span></span></div>
+        <div class="steps-sub" id="steps-pct">— of goal</div>
+      </div>
+
+      <!-- CALENDAR -->
+      <div class="card" id="card-calendar">
+        <div class="card-head">
+          <div class="card-title"><span class="ring"></span>CALENDAR</div>
+          <div class="card-menu">⋮</div>
+        </div>
+        <!-- DATA SOURCE: Google/Apple Calendar ICS feed -->
+        <div id="cal-list"></div>
+        <div class="cal-footer"><span>View full day</span><span>→</span></div>
+      </div>
+
+      <!-- PROJECTS -->
+      <div class="card" id="card-projects">
+        <div class="card-head">
+          <div class="card-title"><span class="ring"></span>PROJECTS</div>
+          <div class="card-menu">⋮</div>
+        </div>
+        <!-- DATA SOURCE: manual entry (subjective % complete) -->
+        <div id="proj-list"></div>
+      </div>
+
+      <!-- HEALTH -->
+      <div class="card" id="card-health">
+        <div class="card-head">
+          <div class="card-title"><span class="ring"></span>HEALTH</div>
+          <div class="card-menu">⋮</div>
+        </div>
+        <!-- DATA SOURCE: Arboleaf scale -> Apple Health, via Health Auto Export -->
+        <div class="health-top">
+          <div>
+            <div class="health-label">WEIGHT</div>
+            <div><span class="health-num" id="health-weight">—</span> <span class="health-unit" id="health-unit">KG</span></div>
+            <div class="health-delta" id="health-delta">—</div>
+          </div>
+        </div>
+        <div class="health-body">
+          <div class="health-chart-wrap">
+            <svg id="health-chart" width="100%" height="60" viewBox="0 0 220 60" preserveAspectRatio="none"></svg>
+            <div class="health-axis"><span id="health-start">—</span><span id="health-end">—</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- UP NEXT -->
+      <div class="card" id="card-upnext">
+        <div class="card-head">
+          <div class="card-title"><span class="ring"></span>UP NEXT</div>
+          <div class="card-menu">⋮</div>
+        </div>
+        <!-- DATA SOURCE: calendar / manual deadline list; "in X days" computed live -->
+        <div id="upnext-list"></div>
+      </div>
+
+      <!-- WEEKLY OVERVIEW -->
+      <div class="card card-weekly" id="card-weekly">
+        <div class="card-head">
+          <div class="card-title"><span class="ring"></span>WEEKLY OVERVIEW</div>
+          <div class="card-menu">⋮</div>
+        </div>
+        <!-- DATA SOURCE: aggregated from CFA app (study hrs) + Health Auto Export (steps) + manual/Streaks (focus %) -->
+        <div class="weekly-body" id="weekly-body"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   DEFAULT_DATA
+   Fallback data, used only if data.json can't be fetched (e.g. the very
+   first time you open this file locally via file://, before it's hosted).
+   Once this is hosted (GitHub Pages etc.) and data.json sits next to it,
+   everything below is driven by that file instead — edit data.json, not
+   this block, to update the dashboard day to day.
+   ========================================================================= */
+const DEFAULT_DATA = {
+  today: [
+    { label: "Review FRA: NPV & IRR", done: true },
+    { label: "CFA \u2013 Ethics practice (30 Qs)", done: false },
+    { label: "Study Derivatives (MCQs)", done: false },
+    { label: "MSc: Regression assignment", done: false },
+    { label: "AEROME: Study Chapter 3", done: false },
+    { label: "Read 20 pages", done: false }
+  ],
+  cfa: { percent: 37, topic: "Fixed Income", progressText: "1h 12m / 1h 30m", next: "Derivatives" },
+  steps: { current: 6257, goal: 10000, bars: [4,7,3,8,6,9,5,7,8,4,6,9,7,5,8,6,9,4,7,8,5,6,9,7] },
+  calendar: [
+    { time: "09:00", label: "Work" },
+    { time: "13:30", label: "Lunch" },
+    { time: "18:00", label: "Gym" },
+    { time: "20:30", label: "CFA Study" },
+    { time: "22:00", label: "Wind down" }
+  ],
+  projects: [
+    { name: "CFA Level I", pct: 37 },
+    { name: "MSc Data Science", pct: 58 },
+    { name: "AEROME", pct: 41 },
+    { name: "Reading", pct: 66 },
+    { name: "Admin", pct: 75 }
+  ],
+  health: { weight: 128.9, unit: "KG", deltaKg: -4.1, deltaLabel: "VS 25 AUG", startLabel: "25 AUG", endLabel: "01 SEP", trend: [133,132.4,131.8,131.5,130.9,130.3,129.8,129.4,128.9] },
+  upNext: [
+    { title: "CFA Mock Exam", inDays: 2 },
+    { title: "MSc Assignment Due", inDays: 5 },
+    { title: "AEROME Quiz", inDays: 6 },
+    { title: "Review Session", fixedLabel: "Sun 18:00" },
+    { title: "Grocery Run", fixedLabel: "Sun 11:00" }
+  ],
+  weekly: {
+    days: ["M","T","W","T","F","S","S"],
+    study: [2.1,1.9,2.6,2.4,3.0,1.2,0.8],
+    steps: [6.2,7.1,8.3,6.7,9.4,5.2,3.1],
+    focus: [78,82,88,84,91,76,65]
+  }
+};
+
+let DASHBOARD_DATA = DEFAULT_DATA;
+
+/* ---------------- Data loading + auto-refresh ---------------- */
+// Fetches data.json (same folder as this file) and re-renders every card.
+// Cache-busting query param + no-store header make sure a stale copy from
+// GitHub Pages' CDN never sticks around after you push an update.
+const DATA_REFRESH_MS = 5 * 60 * 1000; // 5 minutes — adjust to taste
+let dataFetchFailedOnce = false;
+
+async function loadData(){
+  try{
+    const res = await fetch(`data.json?t=${Date.now()}`, { cache: 'no-store' });
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    DASHBOARD_DATA = await res.json();
+    dataFetchFailedOnce = false;
+  }catch(e){
+    // Falls back to whatever DASHBOARD_DATA already holds (DEFAULT_DATA on
+    // first load, or the last good fetch on later ones). Common causes:
+    // opening via file:// before hosting, or data.json not deployed yet.
+    if(!dataFetchFailedOnce){
+      console.warn('Could not load data.json — using fallback data.', e);
+      dataFetchFailedOnce = true;
+    }
+  }
+  renderAll();
+}
+
+function renderAll(){
+  renderToday();
+  renderCfa();
+  renderSteps();
+  renderCalendar();
+  renderProjects();
+  renderHealth();
+  renderUpNext();
+  renderWeekly();
+}
+
+/* ---------------- Clock, date, weather ---------------- */
+function pad(n){ return n.toString().padStart(2,'0'); }
+function updateClock(){
+  const now = new Date();
+  let h = now.getHours();
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12; if(h===0) h = 12;
+  document.getElementById('clock-time').textContent = `${pad(h)}:${pad(now.getMinutes())}`;
+  document.getElementById('clock-ampm').textContent = ampm;
+  const days = ["SUN","MON","TUE","WED","THU","FRI","SAT"];
+  const months = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+  document.getElementById('date-text').textContent = `${days[now.getDay()]}, ${pad(now.getDate())} ${months[now.getMonth()]}`;
+}
+updateClock();
+setInterval(updateClock, 1000 * 15);
+
+// Real weather for Cairo via Open-Meteo (no API key required).
+async function loadWeather(){
+  try{
+    const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=30.0444&longitude=31.2357&current_weather=true');
+    const json = await res.json();
+    const t = Math.round(json.current_weather.temperature);
+    document.getElementById('weather-temp').textContent = `${t}\u00b0`;
+  }catch(e){
+    document.getElementById('weather-temp').textContent = '\u2014';
+  }
+}
+loadWeather();
+setInterval(loadWeather, 1000 * 60 * 30);
+
+// Screen Wake Lock (Safari 16.4+) — best-effort; Auto-Lock: Never in
+// Settings is still the reliable backstop, see the guide.
+async function keepAwake(){
+  try{
+    if('wakeLock' in navigator){ await navigator.wakeLock.request('screen'); }
+  }catch(e){ /* ignore — falls back to Auto-Lock setting */ }
+}
+keepAwake();
+document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible') keepAwake(); });
+
+/* ---------------- Today ---------------- */
+function renderToday(){
+  const wrap = document.getElementById('task-list');
+  wrap.innerHTML = DASHBOARD_DATA.today.map(t => `
+    <div class="task-row ${t.done ? 'done' : ''}">
+      <div class="checkbox ${t.done ? 'checked' : ''}">
+        ${t.done ? '<svg viewBox="0 0 12 12" fill="none" stroke="#0a0a0a" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg>' : ''}
+      </div>
+      <div class="task-label">${t.label}</div>
+    </div>`).join('');
+}
+
+/* ---------------- CFA ring ---------------- */
+function renderCfa(){
+  const { percent, topic, progressText, next } = DASHBOARD_DATA.cfa;
+  document.getElementById('cfa-topic').textContent = topic;
+  document.getElementById('cfa-progress').textContent = progressText;
+  document.getElementById('cfa-next').textContent = next;
+
+  const svg = document.getElementById('cfa-ring');
+  const cx = 65, cy = 65, r = 52, dots = 60;
+  const filled = Math.round((percent/100) * dots);
+  let inner = '';
+  for(let i=0;i<dots;i++){
+    const angle = (i / dots) * Math.PI * 2 - Math.PI/2;
+    const x = cx + r * Math.cos(angle);
+    const y = cy + r * Math.sin(angle);
+    inner += `<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="2.2" fill="${i < filled ? 'var(--dot-fill)' : 'var(--dot-empty)'}"/>`;
+  }
+  inner += `<text x="${cx}" y="${cy-2}" text-anchor="middle" fill="var(--text-1)" font-size="24" font-family="var(--font-mono)">${percent}%</text>`;
+  inner += `<text x="${cx}" y="${cy+16}" text-anchor="middle" fill="var(--text-3)" font-size="9" letter-spacing="1" font-family="var(--font-mono)">COMPLETE</text>`;
+  svg.innerHTML = inner;
+}
+
+/* ---------------- Steps ---------------- */
+function renderSteps(){
+  const { current, goal, bars } = DASHBOARD_DATA.steps;
+  const max = Math.max(...bars);
+  document.getElementById('steps-bars').innerHTML = bars.map(v =>
+    `<div class="steps-bar" style="height:${(v/max*100).toFixed(0)}%"></div>`).join('');
+  document.getElementById('steps-current').textContent = current.toLocaleString();
+  document.getElementById('steps-goal').textContent = goal.toLocaleString();
+  document.getElementById('steps-pct').textContent = `${Math.round(current/goal*100)}% of goal`;
+}
+
+/* ---------------- Calendar ---------------- */
+function renderCalendar(){
+  document.getElementById('cal-list').innerHTML = DASHBOARD_DATA.calendar.map(e => `
+    <div class="cal-row"><span class="cal-time">${e.time}</span><span class="cal-dot"></span><span>${e.label}</span></div>
+  `).join('');
+}
+
+/* ---------------- Projects ---------------- */
+function renderProjects(){
+  document.getElementById('proj-list').innerHTML = DASHBOARD_DATA.projects.map(p => {
+    const on = Math.round(p.pct/10);
+    let dots = '';
+    for(let i=0;i<10;i++) dots += `<span class="proj-dot ${i<on?'on':''}"></span>`;
+    return `<div class="proj-row"><span class="proj-name">${p.name}</span><span class="proj-dots">${dots}</span><span class="proj-pct">${p.pct}%</span></div>`;
+  }).join('');
+}
+
+/* ---------------- Health ---------------- */
+function renderHealth(){
+  const h = DASHBOARD_DATA.health;
+  document.getElementById('health-weight').textContent = h.weight.toFixed(1);
+  document.getElementById('health-unit').textContent = h.unit;
+  document.getElementById('health-delta').textContent = `\u2193 ${Math.abs(h.deltaKg).toFixed(1)} ${h.unit}   ${h.deltaLabel}`;
+  document.getElementById('health-start').textContent = h.startLabel;
+  document.getElementById('health-end').textContent = h.endLabel;
+
+  const trend = h.trend;
+  const min = Math.min(...trend), max = Math.max(...trend);
+  const w = 220, hgt = 60, pad = 6;
+  const pts = trend.map((v,i) => {
+    const x = pad + (i/(trend.length-1)) * (w - pad*2);
+    const y = hgt - pad - ((v-min)/(max-min || 1)) * (hgt - pad*2);
+    return [x,y];
+  });
+  const path = pts.map((p,i) => (i===0?'M':'L') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+  const dots = pts.map((p,i) => i===0 ? `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.5" fill="var(--text-1)"/>` : `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="1.6" fill="var(--text-2)"/>`).join('');
+  document.getElementById('health-chart').innerHTML =
+    `<path d="${path}" fill="none" stroke="var(--text-1)" stroke-width="1.4"/>${dots}`;
+}
+
+/* ---------------- Up next ---------------- */
+function renderUpNext(){
+  document.getElementById('upnext-list').innerHTML = DASHBOARD_DATA.upNext.map(u => {
+    const right = u.fixedLabel ? u.fixedLabel : `In ${u.inDays} day${u.inDays===1?'':'s'}`;
+    return `<div class="up-row">
+      <div class="up-left">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        <span>${u.title}</span>
+      </div>
+      <span class="up-right">${right}</span>
+    </div>`;
+  }).join('');
+}
+
+/* ---------------- Weekly overview ---------------- */
+function renderWeekly(){
+  const w = DASHBOARD_DATA.weekly;
+  const panels = [
+    { title: 'STUDY (HRS)', values: w.study },
+    { title: 'STEPS (K)', values: w.steps },
+    { title: 'FOCUS (%)', values: w.focus }
+  ];
+  document.getElementById('weekly-body').innerHTML = panels.map(p => {
+    const max = Math.max(...p.values);
+    const bars = p.values.map((v,i) => `
+      <div class="weekly-col">
+        <span class="weekly-val">${v}</span>
+        <div class="weekly-bar" style="height:${(v/max*100).toFixed(0)}%"></div>
+        <span class="weekly-day">${w.days[i]}</span>
+      </div>`).join('');
+    return `<div class="weekly-panel"><div class="weekly-title">${p.title}</div><div class="weekly-chart">${bars}</div></div>`;
+  }).join('');
+}
+
+/* ---------------- Init ---------------- */
+loadData();
+setInterval(loadData, DATA_REFRESH_MS);
+</script>
+</body>
+</html>
