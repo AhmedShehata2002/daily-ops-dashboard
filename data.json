@@ -1,29 +1,10 @@
 {
   "today": [
-    {
-      "label": "Review FRA: NPV & IRR",
-      "done": true
-    },
-    {
-      "label": "CFA – Ethics practice (30 Qs)",
-      "done": false
-    },
-    {
-      "label": "Study Derivatives (MCQs)",
-      "done": false
-    },
-    {
-      "label": "MSc: Regression assignment",
-      "done": false
-    },
-    {
-      "label": "AEROME: Study Chapter 3",
-      "done": false
-    },
-    {
-      "label": "Read 20 pages",
-      "done": false
-    }
+    { "label": "CFA – Ethics practice (30 Qs)", "done": false },
+    { "label": "Study Derivatives (MCQs)", "done": false },
+    { "label": "MSc: Regression assignment", "done": false },
+    { "label": "AEROME: Study Chapter 3", "done": false },
+    { "label": "Read 20 pages", "done": false }
   ],
   "cfa": {
     "percent": 37,
@@ -31,86 +12,36 @@
     "progressText": "1h 12m / 1h 30m",
     "next": "Derivatives"
   },
-  "steps": {
-    "current": 6257,
-    "goal": 10000,
-    "bars": [
-      4,
-      7,
-      3,
-      8,
-      6,
-      9,
-      5,
-      7,
-      8,
-      4,
-      6,
-      9,
-      7,
-      5,
-      8,
-      6,
-      9,
-      4,
-      7,
-      8,
-      5,
-      6,
-      9,
-      7
-    ]
-  },
   "calendar": [
-    {
-      "time": "All day",
-      "label": "hello"
-    }
+    { "time": "09:00", "label": "Work" },
+    { "time": "13:30", "label": "Lunch" },
+    { "time": "18:00", "label": "Gym" },
+    { "time": "20:30", "label": "CFA Study" }
   ],
   "projects": [
-    {
-      "name": "CFA Level I",
-      "pct": 37
-    },
-    {
-      "name": "MSc Data Science",
-      "pct": 58
-    },
-    {
-      "name": "AEROME",
-      "pct": 41
-    },
-    {
-      "name": "Reading",
-      "pct": 66
-    },
-    {
-      "name": "Admin",
-      "pct": 75
-    }
+    { "name": "CFA Level I",     "pct": 37 },
+    { "name": "MSc Data Science","pct": 58 },
+    { "name": "AEROME",          "pct": 41 },
+    { "name": "Reading",         "pct": 66 },
+    { "name": "Admin",           "pct": 75 }
   ],
-  "health": {
-    "recovery": 78,
-    "hrv": 62,
-    "restingHR": 54,
-    "strain": 12.4,
-    "hrvTrend": [58,61,59,63,60,64,62,65,61,63,67,64,62,66,60,63,65,68,64,63,66,62,65,63,67,62],
-    "hrTrend":  [56,55,57,54,56,53,55,54,52,55,53,54,56,53,55,54,52,53,55,54,56,53,54,55,52,54]
-  },
   "upNext": [
-    {
-      "title": "hello",
-      "inDays": 2
-    },
-    {
-      "title": "DUBAI - DECE 2026",
-      "inDays": 4
-    }
+    { "title": "DUBAI - DECE 2026", "inDays": 4 }
   ],
-  "weekly": {
-    "days":      ["M","T","W","T","F","S","S"],
-    "recovery":  [72,68,81,76,84,79,78],
-    "strain":    [12.1,14.3,10.8,13.5,11.2,9.6,12.4],
-    "restingHR": [55,57,53,56,54,52,54]
-  }
+  "goalsLong": [
+    "Pass CFA Level I & II",
+    "Complete MSc Data Science",
+    "Launch AEROME operations",
+    "Build financial independence"
+  ],
+  "goalsMid": [
+    "Pass CFA June 2026 exam",
+    "Submit MSc thesis draft",
+    "Close first AEROME contract"
+  ],
+  "goalsShort": [
+    "Complete Fixed Income module",
+    "Finish regression assignment",
+    "Study 2h daily this week"
+  ]
 }
