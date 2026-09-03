@@ -63,8 +63,8 @@
   },
   "calendar": [
     {
-      "time": "17:00",
-      "label": "dentist"
+      "time": "All day",
+      "label": "hello"
     }
   ],
   "projects": [
@@ -109,6 +109,10 @@
     ]
   },
   "upNext": [
+    {
+      "title": "hello",
+      "inDays": 2
+    },
     {
       "title": "DUBAI - DECE 2026",
       "inDays": 4
