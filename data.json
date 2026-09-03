@@ -1,10 +1,25 @@
 {
   "today": [
-    { "label": "CFA – Ethics practice (30 Qs)", "done": false },
-    { "label": "Study Derivatives (MCQs)", "done": false },
-    { "label": "MSc: Regression assignment", "done": false },
-    { "label": "AEROME: Study Chapter 3", "done": false },
-    { "label": "Read 20 pages", "done": false }
+    {
+      "label": "CFA – Ethics practice (30 Qs)",
+      "done": false
+    },
+    {
+      "label": "Study Derivatives (MCQs)",
+      "done": false
+    },
+    {
+      "label": "MSc: Regression assignment",
+      "done": false
+    },
+    {
+      "label": "AEROME: Study Chapter 3",
+      "done": false
+    },
+    {
+      "label": "Read 20 pages",
+      "done": false
+    }
   ],
   "cfa": {
     "percent": 37,
@@ -13,20 +28,54 @@
     "next": "Derivatives"
   },
   "calendar": [
-    { "time": "09:00", "label": "Work" },
-    { "time": "13:30", "label": "Lunch" },
-    { "time": "18:00", "label": "Gym" },
-    { "time": "20:30", "label": "CFA Study" }
+    {
+      "time": "09:00",
+      "label": "Work"
+    },
+    {
+      "time": "13:30",
+      "label": "Lunch"
+    },
+    {
+      "time": "18:00",
+      "label": "Gym"
+    },
+    {
+      "time": "20:30",
+      "label": "CFA Study"
+    }
   ],
   "projects": [
-    { "name": "CFA Level I",     "pct": 37 },
-    { "name": "MSc Data Science","pct": 58 },
-    { "name": "AEROME",          "pct": 41 },
-    { "name": "Reading",         "pct": 66 },
-    { "name": "Admin",           "pct": 75 }
+    {
+      "name": "CFA Level I",
+      "pct": 37
+    },
+    {
+      "name": "MSc Data Science",
+      "pct": 58
+    },
+    {
+      "name": "AEROME",
+      "pct": 41
+    },
+    {
+      "name": "Reading",
+      "pct": 66
+    },
+    {
+      "name": "Admin",
+      "pct": 75
+    }
   ],
   "upNext": [
-    { "title": "DUBAI - DECE 2026", "inDays": 4 }
+    {
+      "title": "nana doc ",
+      "inDays": 2
+    },
+    {
+      "title": "DUBAI - DECE 2026",
+      "inDays": 4
+    }
   ],
   "goalsLong": [
     "Pass CFA Level I & II",
