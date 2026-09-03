@@ -1,11 +1,11 @@
 {
-  "zones": [
-    { "name": "CFA", "task": "Study Derivatives (MCQs)" },
-    { "name": "HEALTH", "task": "Gym – leg day" },
-    { "name": "PERSONAL", "task": "Read 20 pages" },
-    { "name": "MASTERS", "task": "Regression assignment" },
-    { "name": "FAMILY", "task": "Call parents" },
-    { "name": "AEROME", "task": "Upload video" }
+  "today": [
+    { "label": "Review FRA: NPV & IRR", "done": true },
+    { "label": "CFA – Ethics practice (30 Qs)", "done": false },
+    { "label": "Study Derivatives (MCQs)", "done": false },
+    { "label": "MSc: Regression assignment", "done": false },
+    { "label": "AEROME: Study Chapter 3", "done": false },
+    { "label": "Read 20 pages", "done": false }
   ],
   "cfa": {
     "percent": 37,
