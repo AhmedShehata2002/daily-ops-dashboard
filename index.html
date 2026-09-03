@@ -80,13 +80,10 @@
   .card-sub{ font-size:10.5px; color:var(--text-3); letter-spacing:1px; margin:-2px 0 8px 20px; }
 
   /* Today */
-  .task-row{ display:flex; align-items:center; gap:11px; padding:6px 0; font-size:13px; }
-  .checkbox{ width:15px; height:15px; border-radius:4px; border:1.4px solid var(--text-3); flex-shrink:0; display:flex; align-items:center; justify-content:center; }
-  .checkbox.checked{ background:var(--text-1); border-color:var(--text-1); }
-  .checkbox.checked svg{ width:9px; height:9px; }
-  .task-row.done .task-label{ color:var(--text-3); text-decoration:line-through; }
-  .task-list{ flex:1; overflow:hidden; }
-  .add-task{ display:flex; align-items:center; gap:11px; padding-top:9px; margin-top:6px; border-top:1px solid var(--border-soft); font-size:13px; color:var(--text-2); }
+  .zone-grid{ flex:1; display:grid; grid-template-columns:repeat(3, 1fr); grid-template-rows:repeat(2, 1fr); gap:8px; }
+  .zone-tile{ background:#0f0f0f; border:1px solid var(--border-soft); border-radius:11px; padding:10px 11px; display:flex; flex-direction:column; justify-content:center; gap:5px; min-width:0; }
+  .zone-name{ font-size:9.5px; letter-spacing:1.2px; color:var(--text-2); }
+  .zone-task{ font-size:12px; color:var(--text-1); line-height:1.3; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
 
   /* CFA */
   .cfa-body{ display:flex; align-items:center; gap:26px; flex:1; }
@@ -204,16 +201,15 @@
 
     <div class="grid">
 
-      <!-- TODAY -->
-      <div class="card" id="card-today">
+      <!-- ZONES -->
+      <div class="card" id="card-zones">
         <div class="card-head">
-          <div class="card-title"><span class="ring"></span>TODAY</div>
+          <div class="card-title"><span class="ring"></span>ZONES</div>
           <div class="card-menu">⋮</div>
         </div>
-        <div class="card-sub">SYNCED FROM REMINDERS</div>
-        <!-- DATA SOURCE: Apple Reminders / Todoist API -> written into DASHBOARD_DATA.today on refresh -->
-        <div class="task-list" id="task-list"></div>
-        <div class="add-task">+ &nbsp;Add task</div>
+        <div class="card-sub">SYNCED FROM ELLIE</div>
+        <!-- DATA SOURCE: Ellie tasks, grouped by Label -> the top/next task per zone label -->
+        <div class="zone-grid" id="zone-grid"></div>
       </div>
 
       <!-- CFA -->
@@ -322,13 +318,17 @@
    this block, to update the dashboard day to day.
    ========================================================================= */
 const DEFAULT_DATA = {
-  today: [
-    { label: "Review FRA: NPV & IRR", done: true },
-    { label: "CFA \u2013 Ethics practice (30 Qs)", done: false },
-    { label: "Study Derivatives (MCQs)", done: false },
-    { label: "MSc: Regression assignment", done: false },
-    { label: "AEROME: Study Chapter 3", done: false },
-    { label: "Read 20 pages", done: false }
+  // One tile per life zone, each showing the single next/current task in
+  // that zone. Source: Ellie tasks grouped by Label — tag each brain-dump
+  // item with its zone label in Ellie, then whatever pulls from Ellie
+  // (API/Zapier) picks the top task per label and writes this array.
+  zones: [
+    { name: "CFA", task: "Study Derivatives (MCQs)" },
+    { name: "HEALTH", task: "Gym \u2013 leg day" },
+    { name: "PERSONAL", task: "Read 20 pages" },
+    { name: "MASTERS", task: "Regression assignment" },
+    { name: "FAMILY", task: "Call parents" },
+    { name: "AEROME", task: "Upload video" }
   ],
   cfa: { percent: 37, topic: "Fixed Income", progressText: "1h 12m / 1h 30m", next: "Derivatives" },
   steps: { current: 6257, goal: 10000, bars: [4,7,3,8,6,9,5,7,8,4,6,9,7,5,8,6,9,4,7,8,5,6,9,7] },
@@ -390,7 +390,7 @@ async function loadData(){
 }
 
 function renderAll(){
-  renderToday();
+  renderZones();
   renderCfa();
   renderSteps();
   renderCalendar();
@@ -440,15 +440,13 @@ async function keepAwake(){
 keepAwake();
 document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible') keepAwake(); });
 
-/* ---------------- Today ---------------- */
-function renderToday(){
-  const wrap = document.getElementById('task-list');
-  wrap.innerHTML = DASHBOARD_DATA.today.map(t => `
-    <div class="task-row ${t.done ? 'done' : ''}">
-      <div class="checkbox ${t.done ? 'checked' : ''}">
-        ${t.done ? '<svg viewBox="0 0 12 12" fill="none" stroke="#0a0a0a" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg>' : ''}
-      </div>
-      <div class="task-label">${t.label}</div>
+/* ---------------- Zones ---------------- */
+function renderZones(){
+  const wrap = document.getElementById('zone-grid');
+  wrap.innerHTML = DASHBOARD_DATA.zones.map(z => `
+    <div class="zone-tile">
+      <div class="zone-name">${z.name}</div>
+      <div class="zone-task">${z.task}</div>
     </div>`).join('');
 }
 
