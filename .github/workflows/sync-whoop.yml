@@ -1,0 +1,42 @@
+name: Sync Whoop Data
+
+on:
+  schedule:
+    - cron: '0 */3 * * *'   # every 3 hours
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sync Whoop to data.json
+        env:
+          WHOOP_CLIENT_ID:     ${{ secrets.WHOOP_CLIENT_ID }}
+          WHOOP_CLIENT_SECRET: ${{ secrets.WHOOP_CLIENT_SECRET }}
+          WHOOP_REFRESH_TOKEN: ${{ secrets.WHOOP_REFRESH_TOKEN }}
+        run: node .github/scripts/sync-whoop.js
+
+      - name: Rotate refresh token if changed
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_PAT }}
+        run: |
+          if [ -f /tmp/new_whoop_refresh_token ]; then
+            NEW=$(cat /tmp/new_whoop_refresh_token)
+            gh secret set WHOOP_REFRESH_TOKEN --body "$NEW" \
+              --repo AhmedShehata2002/daily-ops-dashboard
+            echo "Refresh token rotated."
+          fi
+
+      - name: Commit if changed
+        run: |
+          git config user.name "Daily Ops Bot"
+          git config user.email "actions@github.com"
+          git add data.json
+          git diff --staged --quiet || git commit -m "sync: whoop update [skip ci]"
+          git push

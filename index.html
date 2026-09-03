@@ -115,15 +115,16 @@
   .proj-dot.on{ background:var(--dot-fill); }
   .proj-pct{ color:var(--text-2); width:32px; text-align:right; flex-shrink:0; }
 
-  /* Health */
-  .health-top{ display:flex; align-items:baseline; gap:8px; }
-  .health-label{ font-size:10.5px; color:var(--text-3); letter-spacing:1px; }
-  .health-num{ font-size:30px; margin-top:2px; }
-  .health-unit{ font-size:13px; color:var(--text-2); }
-  .health-delta{ font-size:11.5px; color:var(--text-2); margin-top:6px; }
-  .health-body{ display:flex; align-items:flex-end; gap:16px; flex:1; margin-top:6px; }
-  .health-chart-wrap{ flex:1; }
-  .health-axis{ display:flex; justify-content:space-between; font-size:9.5px; color:var(--text-3); margin-top:4px; }
+  /* Health / Whoop */
+  .whoop-metrics{ display:flex; margin:8px 0 10px; }
+  .whoop-metric{ flex:1; display:flex; flex-direction:column; gap:2px; padding-right:12px; }
+  .whoop-metric:not(:first-child){ padding-left:12px; padding-right:0; border-left:1px solid var(--border-soft); }
+  .whoop-metric-label{ font-size:9px; color:var(--text-3); letter-spacing:1px; }
+  .whoop-metric-val{ font-size:22px; line-height:1.1; }
+  .whoop-metric-unit{ font-size:10px; color:var(--text-2); }
+  .whoop-charts{ display:flex; flex-direction:column; gap:6px; flex:1; min-height:0; }
+  .whoop-chart-row{ flex:1; display:flex; flex-direction:column; min-height:0; }
+  .whoop-chart-title{ font-size:9px; color:var(--text-3); letter-spacing:1px; margin-bottom:2px; }
 
   /* Up next */
   .up-row{ display:flex; align-items:center; justify-content:space-between; padding:7px 0; font-size:13px; }
@@ -210,7 +211,7 @@
           <div class="card-title"><span class="ring"></span>TODAY</div>
           <div class="card-menu">⋮</div>
         </div>
-        <div class="card-sub">SYNCED FROM REMINDERS</div>
+        <div class="card-sub">SYNCED FROM GOOGLE TASKS</div>
         <!-- DATA SOURCE: Apple Reminders / Todoist API -> written into DASHBOARD_DATA.today on refresh -->
         <div class="task-list" id="task-list"></div>
         <div class="add-task">+ &nbsp;Add task</div>
@@ -266,24 +267,38 @@
         <div id="proj-list"></div>
       </div>
 
-      <!-- HEALTH -->
+      <!-- HEALTH / WHOOP -->
       <div class="card" id="card-health">
         <div class="card-head">
-          <div class="card-title"><span class="ring"></span>HEALTH</div>
+          <div class="card-title"><span class="ring"></span>WHOOP</div>
           <div class="card-menu">⋮</div>
         </div>
-        <!-- DATA SOURCE: Arboleaf scale -> Apple Health, via Health Auto Export -->
-        <div class="health-top">
-          <div>
-            <div class="health-label">WEIGHT</div>
-            <div><span class="health-num" id="health-weight">—</span> <span class="health-unit" id="health-unit">KG</span></div>
-            <div class="health-delta" id="health-delta">—</div>
+        <div class="card-sub">RECOVERY · HRV · RESTING HR</div>
+        <div class="whoop-metrics">
+          <div class="whoop-metric">
+            <span class="whoop-metric-label">RECOVERY</span>
+            <span class="whoop-metric-val" id="whoop-recovery">—</span>
+            <span class="whoop-metric-unit">%</span>
+          </div>
+          <div class="whoop-metric">
+            <span class="whoop-metric-label">HRV</span>
+            <span class="whoop-metric-val" id="whoop-hrv">—</span>
+            <span class="whoop-metric-unit">MS</span>
+          </div>
+          <div class="whoop-metric">
+            <span class="whoop-metric-label">RESTING HR</span>
+            <span class="whoop-metric-val" id="whoop-rhr">—</span>
+            <span class="whoop-metric-unit">BPM</span>
           </div>
         </div>
-        <div class="health-body">
-          <div class="health-chart-wrap">
-            <svg id="health-chart" width="100%" height="60" viewBox="0 0 220 60" preserveAspectRatio="none"></svg>
-            <div class="health-axis"><span id="health-start">—</span><span id="health-end">—</span></div>
+        <div class="whoop-charts">
+          <div class="whoop-chart-row">
+            <div class="whoop-chart-title">HRV — 26 WEEKS</div>
+            <svg id="whoop-hrv-chart" width="100%" height="100%" viewBox="0 0 220 28" preserveAspectRatio="none"></svg>
+          </div>
+          <div class="whoop-chart-row">
+            <div class="whoop-chart-title">RESTING HR — 26 WEEKS</div>
+            <svg id="whoop-hr-chart" width="100%" height="100%" viewBox="0 0 220 28" preserveAspectRatio="none"></svg>
           </div>
         </div>
       </div>
@@ -346,7 +361,9 @@ const DEFAULT_DATA = {
     { name: "Reading", pct: 66 },
     { name: "Admin", pct: 75 }
   ],
-  health: { weight: 128.9, unit: "KG", deltaKg: -4.1, deltaLabel: "VS 25 AUG", startLabel: "25 AUG", endLabel: "01 SEP", trend: [133,132.4,131.8,131.5,130.9,130.3,129.8,129.4,128.9] },
+  health: { recovery: 78, hrv: 62, restingHR: 54, strain: 12.4,
+    hrvTrend: [58,61,59,63,60,64,62,65,61,63,67,64,62,66,60,63,65,68,64,63,66,62,65,63,67,62],
+    hrTrend:  [56,55,57,54,56,53,55,54,52,55,53,54,56,53,55,54,52,53,55,54,56,53,54,55,52,54] },
   upNext: [
     { title: "CFA Mock Exam", inDays: 2 },
     { title: "MSc Assignment Due", inDays: 5 },
@@ -355,10 +372,10 @@ const DEFAULT_DATA = {
     { title: "Grocery Run", fixedLabel: "Sun 11:00" }
   ],
   weekly: {
-    days: ["M","T","W","T","F","S","S"],
-    study: [2.1,1.9,2.6,2.4,3.0,1.2,0.8],
-    steps: [6.2,7.1,8.3,6.7,9.4,5.2,3.1],
-    focus: [78,82,88,84,91,76,65]
+    days:      ["M","T","W","T","F","S","S"],
+    recovery:  [72,68,81,76,84,79,78],
+    strain:    [12.1,14.3,10.8,13.5,11.2,9.6,12.4],
+    restingHR: [55,57,53,56,54,52,54]
   }
 };
 
@@ -502,27 +519,31 @@ function renderProjects(){
   }).join('');
 }
 
-/* ---------------- Health ---------------- */
+/* ---------------- Sparkline helper ---------------- */
+function sparkline(svgId, data, stroke){
+  if(!data || !data.length) return;
+  const min = Math.min(...data), max = Math.max(...data);
+  const w = 220, h = 28, pad = 3;
+  const pts = data.map((v,i) => {
+    const x = pad + (i/(data.length-1||1)) * (w - pad*2);
+    const y = h - pad - ((v-min)/(max-min||1)) * (h - pad*2);
+    return [x.toFixed(1), y.toFixed(1)];
+  });
+  const path = pts.map((p,i) => (i===0?'M':'L') + p[0] + ',' + p[1]).join(' ');
+  const last = pts[pts.length-1];
+  document.getElementById(svgId).innerHTML =
+    `<path d="${path}" fill="none" stroke="${stroke||'var(--text-2)'}" stroke-width="1.2"/>` +
+    `<circle cx="${last[0]}" cy="${last[1]}" r="2" fill="var(--text-1)"/>`;
+}
+
+/* ---------------- Health / Whoop ---------------- */
 function renderHealth(){
   const h = DASHBOARD_DATA.health;
-  document.getElementById('health-weight').textContent = h.weight.toFixed(1);
-  document.getElementById('health-unit').textContent = h.unit;
-  document.getElementById('health-delta').textContent = `\u2193 ${Math.abs(h.deltaKg).toFixed(1)} ${h.unit}   ${h.deltaLabel}`;
-  document.getElementById('health-start').textContent = h.startLabel;
-  document.getElementById('health-end').textContent = h.endLabel;
-
-  const trend = h.trend;
-  const min = Math.min(...trend), max = Math.max(...trend);
-  const w = 220, hgt = 60, pad = 6;
-  const pts = trend.map((v,i) => {
-    const x = pad + (i/(trend.length-1)) * (w - pad*2);
-    const y = hgt - pad - ((v-min)/(max-min || 1)) * (hgt - pad*2);
-    return [x,y];
-  });
-  const path = pts.map((p,i) => (i===0?'M':'L') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
-  const dots = pts.map((p,i) => i===0 ? `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.5" fill="var(--text-1)"/>` : `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="1.6" fill="var(--text-2)"/>`).join('');
-  document.getElementById('health-chart').innerHTML =
-    `<path d="${path}" fill="none" stroke="var(--text-1)" stroke-width="1.4"/>${dots}`;
+  document.getElementById('whoop-recovery').textContent = h.recovery ?? '—';
+  document.getElementById('whoop-hrv').textContent = h.hrv ?? '—';
+  document.getElementById('whoop-rhr').textContent = h.restingHR ?? '—';
+  sparkline('whoop-hrv-chart', h.hrvTrend, 'var(--text-1)');
+  sparkline('whoop-hr-chart',  h.hrTrend,  'var(--text-2)');
 }
 
 /* ---------------- Up next ---------------- */
@@ -543,12 +564,13 @@ function renderUpNext(){
 function renderWeekly(){
   const w = DASHBOARD_DATA.weekly;
   const panels = [
-    { title: 'STUDY (HRS)', values: w.study },
-    { title: 'STEPS (K)', values: w.steps },
-    { title: 'FOCUS (%)', values: w.focus }
+    { title: 'RECOVERY (%)', values: w.recovery },
+    { title: 'STRAIN', values: w.strain },
+    { title: 'RESTING HR', values: w.restingHR }
   ];
   document.getElementById('weekly-body').innerHTML = panels.map(p => {
-    const max = Math.max(...p.values);
+    if(!p.values) return `<div class="weekly-panel"><div class="weekly-title">${p.title}</div></div>`;
+    const max = Math.max(...p.values) || 1;
     const bars = p.values.map((v,i) => `
       <div class="weekly-col">
         <span class="weekly-val">${v}</span>
