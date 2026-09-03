@@ -1,0 +1,26 @@
+name: Sync Health Data
+
+on:
+  repository_dispatch:
+    types: [health-sync]
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update health data in data.json
+        env:
+          CLIENT_PAYLOAD: ${{ toJson(github.event.client_payload) }}
+        run: node .github/scripts/sync-health.js
+
+      - name: Commit if changed
+        run: |
+          git config user.name "Daily Ops Bot"
+          git config user.email "actions@github.com"
+          git add data.json
+          git diff --staged --quiet || git commit -m "sync: health update [skip ci]"
+          git push

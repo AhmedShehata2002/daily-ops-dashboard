@@ -1,0 +1,47 @@
+name: Update Project Progress
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Project'
+        required: true
+        type: choice
+        options:
+          - CFA Level I
+          - MSc Data Science
+          - AEROME
+          - Reading
+          - Admin
+      percent:
+        description: 'New completion % (0–100)'
+        required: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update project in data.json
+        env:
+          PROJECT_NAME: ${{ inputs.name }}
+          PERCENT: ${{ inputs.percent }}
+        run: |
+          node -e "
+            const fs = require('fs');
+            const d = JSON.parse(fs.readFileSync('data.json', 'utf8'));
+            const proj = d.projects.find(p => p.name === process.env.PROJECT_NAME);
+            if (proj) proj.pct = Number(process.env.PERCENT);
+            fs.writeFileSync('data.json', JSON.stringify(d, null, 2) + '\n');
+          "
+
+      - name: Commit
+        run: |
+          git config user.name "Daily Ops Bot"
+          git config user.email "actions@github.com"
+          git add data.json
+          git commit -m "update: ${{ inputs.name }} → ${{ inputs.percent }}%"
+          git push
