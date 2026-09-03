@@ -16,9 +16,8 @@ jobs:
 
       - name: Sync calendar to data.json
         env:
-          GCAL_API_KEY: ${{ secrets.GCAL_API_KEY }}
-          GCAL_CALENDAR_ID: ${{ secrets.GCAL_CALENDAR_ID }}
-          GCAL_TASKS_ID: ${{ secrets.GCAL_TASKS_ID }}
+          GCAL_API_KEY:      ${{ secrets.GCAL_API_KEY }}
+          GCAL_CALENDAR_ID:  ${{ secrets.GCAL_CALENDAR_ID }}
         run: node .github/scripts/sync-calendar.js
 
       - name: Commit if changed

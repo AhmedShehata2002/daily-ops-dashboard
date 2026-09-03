@@ -95,7 +95,7 @@
   .cfa-value{ color:var(--text-1); font-size:14px; }
 
   /* Prayer Times */
-  .prayer-list{ flex:1; display:flex; flex-direction:column; justify-content:center; gap:0; }
+  .prayer-list{ flex:1; display:flex; flex-direction:column; justify-content:center; }
   .prayer-row{ display:flex; align-items:center; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border-soft); }
   .prayer-row:last-child{ border-bottom:none; }
   .prayer-left{ display:flex; align-items:center; gap:8px; }
@@ -105,19 +105,35 @@
   .prayer-row.next .prayer-time{ color:var(--text-1); font-size:14px; }
   .next-badge{ font-size:8px; color:var(--text-3); letter-spacing:1px; border:1px solid var(--border); border-radius:3px; padding:1px 5px; }
 
+  /* Focus Timer */
+  .timer-body{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:space-between; padding-top:2px; }
+  .timer-mode-row{ display:flex; gap:18px; }
+  .timer-mode-btn{
+    font-size:9.5px; color:var(--text-3); letter-spacing:1.5px; cursor:pointer;
+    padding-bottom:3px; background:none; border:none; border-bottom:1px solid transparent;
+    font-family:var(--font-mono);
+  }
+  .timer-mode-btn.active{ color:var(--text-1); border-bottom-color:var(--text-2); }
+  .timer-ring-wrap{ position:relative; width:116px; height:116px; flex-shrink:0; }
+  .timer-ring-wrap svg{ position:absolute; inset:0; }
+  .timer-time{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-dot); font-size:26px; letter-spacing:2px;
+  }
+  .timer-controls{ display:flex; gap:8px; width:100%; }
+  .timer-btn{
+    flex:1; background:none; border:1px solid var(--border); color:var(--text-3);
+    font-family:var(--font-mono); font-size:9.5px; letter-spacing:1.5px;
+    padding:8px 0; border-radius:8px; cursor:pointer;
+  }
+  .timer-btn.go{ border-color:var(--text-2); color:var(--text-1); }
+  .timer-sessions{ font-size:9.5px; color:var(--text-3); letter-spacing:1px; }
+
   /* Calendar */
   .cal-row{ display:flex; align-items:center; gap:12px; padding:6px 0; font-size:13px; }
   .cal-time{ color:var(--text-2); width:44px; flex-shrink:0; }
   .cal-dot{ width:6px; height:6px; border-radius:50%; background:var(--text-3); flex-shrink:0; }
   .cal-footer{ display:flex; justify-content:space-between; align-items:center; padding-top:9px; margin-top:auto; border-top:1px solid var(--border-soft); font-size:12px; color:var(--text-2); }
-
-  /* Projects */
-  .proj-row{ display:flex; align-items:center; justify-content:space-between; padding:7px 0; font-size:13px; gap:10px; }
-  .proj-name{ flex-shrink:0; }
-  .proj-dots{ display:flex; gap:3.5px; flex:1; justify-content:center; }
-  .proj-dot{ width:5px; height:5px; border-radius:50%; background:var(--dot-empty); }
-  .proj-dot.on{ background:var(--dot-fill); }
-  .proj-pct{ color:var(--text-2); width:32px; text-align:right; flex-shrink:0; }
 
   /* Goals */
   .goal-list{ flex:1; overflow:hidden; display:flex; flex-direction:column; justify-content:center; gap:1px; }
@@ -196,7 +212,7 @@
           <div class="card-title"><span class="ring"></span>TODAY</div>
           <div class="card-menu">⋮</div>
         </div>
-        <div class="card-sub">SYNCED FROM GOOGLE TASKS</div>
+        <div class="card-sub">ALL-DAY EVENTS · GOOGLE CAL</div>
         <div class="task-list" id="task-list"></div>
         <div class="add-task">+ &nbsp;Add task</div>
       </div>
@@ -239,13 +255,27 @@
         <div class="cal-footer"><span>View full day</span><span>→</span></div>
       </div>
 
-      <!-- PROJECTS -->
-      <div class="card" id="card-projects">
+      <!-- FOCUS TIMER -->
+      <div class="card" id="card-focus">
         <div class="card-head">
-          <div class="card-title"><span class="ring"></span>PROJECTS</div>
+          <div class="card-title"><span class="ring"></span>FOCUS</div>
           <div class="card-menu">⋮</div>
         </div>
-        <div id="proj-list"></div>
+        <div class="timer-body">
+          <div class="timer-mode-row">
+            <button class="timer-mode-btn active" id="timer-mode-work">WORK</button>
+            <button class="timer-mode-btn" id="timer-mode-break">BREAK</button>
+          </div>
+          <div class="timer-ring-wrap">
+            <svg id="timer-svg" width="116" height="116" viewBox="0 0 116 116"></svg>
+            <div class="timer-time" id="timer-time">25:00</div>
+          </div>
+          <div class="timer-controls">
+            <button class="timer-btn go" id="timer-start">START</button>
+            <button class="timer-btn" id="timer-reset">RESET</button>
+          </div>
+          <div class="timer-sessions" id="timer-sessions">0 SESSIONS TODAY</div>
+        </div>
       </div>
 
       <!-- LONG TERM GOALS -->
@@ -293,52 +323,16 @@
 
 <script>
 const DEFAULT_DATA = {
-  today: [
-    { label: "CFA – Ethics practice (30 Qs)", done: false },
-    { label: "Study Derivatives (MCQs)", done: false },
-    { label: "MSc: Regression assignment", done: false },
-    { label: "AEROME: Study Chapter 3", done: false },
-    { label: "Read 20 pages", done: false }
-  ],
+  today: [],
   cfa: { percent: 37, topic: "Fixed Income", progressText: "1h 12m / 1h 30m", next: "Derivatives" },
-  calendar: [
-    { time: "09:00", label: "Work" },
-    { time: "13:30", label: "Lunch" },
-    { time: "18:00", label: "Gym" },
-    { time: "20:30", label: "CFA Study" }
-  ],
-  projects: [
-    { name: "CFA Level I", pct: 37 },
-    { name: "MSc Data Science", pct: 58 },
-    { name: "AEROME", pct: 41 },
-    { name: "Reading", pct: 66 },
-    { name: "Admin", pct: 75 }
-  ],
-  upNext: [
-    { title: "CFA Mock Exam", inDays: 2 },
-    { title: "MSc Assignment Due", inDays: 5 },
-    { title: "AEROME Quiz", inDays: 6 }
-  ],
-  goalsLong: [
-    "Pass CFA Level I & II",
-    "Complete MSc Data Science",
-    "Launch AEROME operations",
-    "Build financial independence"
-  ],
-  goalsMid: [
-    "Pass CFA June 2026 exam",
-    "Submit MSc thesis draft",
-    "Close first AEROME contract"
-  ],
-  goalsShort: [
-    "Complete Fixed Income module",
-    "Finish regression assignment",
-    "Study 2h daily this week"
-  ]
+  calendar: [],
+  upNext: [{ title: "DUBAI - DECE 2026", inDays: 4 }],
+  goalsLong:  ["Pass CFA Level I & II", "Complete MSc Data Science", "Launch AEROME operations", "Build financial independence"],
+  goalsMid:   ["Pass CFA June 2026 exam", "Submit MSc thesis draft", "Close first AEROME contract"],
+  goalsShort: ["Complete Fixed Income module", "Finish regression assignment", "Study 2h daily this week"]
 };
 
 let DASHBOARD_DATA = DEFAULT_DATA;
-
 const DATA_REFRESH_MS = 5 * 60 * 1000;
 let dataFetchFailedOnce = false;
 
@@ -349,10 +343,7 @@ async function loadData(){
     DASHBOARD_DATA = await res.json();
     dataFetchFailedOnce = false;
   }catch(e){
-    if(!dataFetchFailedOnce){
-      console.warn('Could not load data.json — using fallback data.', e);
-      dataFetchFailedOnce = true;
-    }
+    if(!dataFetchFailedOnce){ console.warn('data.json unavailable — using fallback.', e); dataFetchFailedOnce = true; }
   }
   renderAll();
 }
@@ -361,7 +352,6 @@ function renderAll(){
   renderToday();
   renderCfa();
   renderCalendar();
-  renderProjects();
   renderGoals();
   renderUpNext();
 }
@@ -372,7 +362,7 @@ function updateClock(){
   const now = new Date();
   let h = now.getHours();
   const ampm = h >= 12 ? 'PM' : 'AM';
-  h = h % 12; if(h===0) h = 12;
+  h = h % 12 || 12;
   document.getElementById('clock-time').textContent = `${pad(h)}:${pad(now.getMinutes())}`;
   document.getElementById('clock-ampm').textContent = ampm;
   const days   = ["SUN","MON","TUE","WED","THU","FRI","SAT"];
@@ -388,9 +378,7 @@ async function loadWeather(){
     const res  = await fetch('https://api.open-meteo.com/v1/forecast?latitude=30.0444&longitude=31.2357&current_weather=true');
     const json = await res.json();
     document.getElementById('weather-temp').textContent = `${Math.round(json.current_weather.temperature)}\u00b0`;
-  }catch(e){
-    document.getElementById('weather-temp').textContent = '\u2014';
-  }
+  }catch(e){ document.getElementById('weather-temp').textContent = '\u2014'; }
 }
 loadWeather();
 setInterval(loadWeather, 30 * 60 * 1000);
@@ -412,7 +400,7 @@ function nextPrayer(timings){
     const [h,m] = timings[p].split(':').map(Number);
     if(h * 60 + m > mins) return p;
   }
-  return PRAYER_NAMES[0]; // past Isha → show Fajr as next
+  return PRAYER_NAMES[0];
 }
 
 async function loadPrayer(){
@@ -422,11 +410,10 @@ async function loadPrayer(){
     const t    = json.data.timings;
     const next = nextPrayer(t);
     document.getElementById('prayer-list').innerHTML = PRAYER_NAMES.map(p => {
-      const isNext   = p === next;
-      const [h, m]   = t[p].split(':').map(Number);
-      const ampm     = h >= 12 ? 'PM' : 'AM';
-      const h12      = h % 12 || 12;
-      const timeStr  = `${pad(h12)}:${pad(m)} ${ampm}`;
+      const isNext  = p === next;
+      const [h, m]  = t[p].split(':').map(Number);
+      const ampm    = h >= 12 ? 'PM' : 'AM';
+      const timeStr = `${pad(h % 12 || 12)}:${pad(m)} ${ampm}`;
       return `<div class="prayer-row${isNext ? ' next' : ''}">
         <div class="prayer-left">
           <span class="prayer-name">${p.toUpperCase()}</span>
@@ -440,11 +427,99 @@ async function loadPrayer(){
   }
 }
 loadPrayer();
-setInterval(loadPrayer, 60 * 60 * 1000); // refresh every hour
+setInterval(loadPrayer, 60 * 60 * 1000);
+
+/* ---------------- Focus Timer ---------------- */
+const WORK_SECS  = 25 * 60;
+const BREAK_SECS =  5 * 60;
+
+let timerSecs     = WORK_SECS;
+let timerTotal    = WORK_SECS;
+let timerRunning  = false;
+let timerMode     = 'work';
+let timerSessions = 0;
+let timerInterval = null;
+
+function drawTimerRing(){
+  const pct    = 1 - timerSecs / timerTotal;
+  const dots   = 48;
+  const filled = Math.round(pct * dots);
+  const cx = 58, cy = 58, r = 50;
+  let inner = '';
+  for(let i = 0; i < dots; i++){
+    const angle = (i / dots) * Math.PI * 2 - Math.PI / 2;
+    const x = cx + r * Math.cos(angle);
+    const y = cy + r * Math.sin(angle);
+    inner += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.4" fill="${i < filled ? 'var(--dot-fill)' : 'var(--dot-empty)'}"/>`;
+  }
+  document.getElementById('timer-svg').innerHTML = inner;
+}
+
+function renderTimer(){
+  const m = Math.floor(timerSecs / 60);
+  const s = timerSecs % 60;
+  document.getElementById('timer-time').textContent = `${pad(m)}:${pad(s)}`;
+  const btn = document.getElementById('timer-start');
+  btn.textContent = timerRunning ? 'PAUSE' : 'START';
+  btn.classList.toggle('go', !timerRunning);
+  document.getElementById('timer-sessions').textContent =
+    `${timerSessions} SESSION${timerSessions !== 1 ? 'S' : ''} TODAY`;
+  drawTimerRing();
+}
+
+function timerTick(){
+  if(timerSecs <= 0){
+    clearInterval(timerInterval);
+    timerRunning = false;
+    if(timerMode === 'work') timerSessions++;
+    switchMode(timerMode === 'work' ? 'break' : 'work');
+    return;
+  }
+  timerSecs--;
+  renderTimer();
+}
+
+function switchMode(mode){
+  timerMode    = mode;
+  timerTotal   = mode === 'work' ? WORK_SECS : BREAK_SECS;
+  timerSecs    = timerTotal;
+  timerRunning = false;
+  clearInterval(timerInterval);
+  document.getElementById('timer-mode-work').classList.toggle('active',  mode === 'work');
+  document.getElementById('timer-mode-break').classList.toggle('active', mode === 'break');
+  renderTimer();
+}
+
+document.getElementById('timer-start').addEventListener('click', () => {
+  if(timerRunning){
+    clearInterval(timerInterval);
+    timerRunning = false;
+  } else {
+    timerRunning  = true;
+    timerInterval = setInterval(timerTick, 1000);
+  }
+  renderTimer();
+});
+document.getElementById('timer-reset').addEventListener('click', () => {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerSecs    = timerTotal;
+  renderTimer();
+});
+document.getElementById('timer-mode-work').addEventListener('click',  () => switchMode('work'));
+document.getElementById('timer-mode-break').addEventListener('click', () => switchMode('break'));
+
+renderTimer();
 
 /* ---------------- Today ---------------- */
 function renderToday(){
-  document.getElementById('task-list').innerHTML = DASHBOARD_DATA.today.map(t => `
+  const tasks = DASHBOARD_DATA.today || [];
+  if(!tasks.length){
+    document.getElementById('task-list').innerHTML =
+      '<div style="color:var(--text-3);font-size:12px;padding:8px 0">Add all-day events in Google Calendar to see tasks here.</div>';
+    return;
+  }
+  document.getElementById('task-list').innerHTML = tasks.map(t => `
     <div class="task-row ${t.done ? 'done' : ''}">
       <div class="checkbox ${t.done ? 'checked' : ''}">
         ${t.done ? '<svg viewBox="0 0 12 12" fill="none" stroke="#0a0a0a" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg>' : ''}
@@ -476,19 +551,15 @@ function renderCfa(){
 
 /* ---------------- Calendar ---------------- */
 function renderCalendar(){
-  document.getElementById('cal-list').innerHTML = DASHBOARD_DATA.calendar.map(e => `
+  const events = DASHBOARD_DATA.calendar || [];
+  if(!events.length){
+    document.getElementById('cal-list').innerHTML =
+      '<div style="color:var(--text-3);font-size:12px;padding:8px 0">No events today</div>';
+    return;
+  }
+  document.getElementById('cal-list').innerHTML = events.map(e => `
     <div class="cal-row"><span class="cal-time">${e.time}</span><span class="cal-dot"></span><span>${e.label}</span></div>
   `).join('');
-}
-
-/* ---------------- Projects ---------------- */
-function renderProjects(){
-  document.getElementById('proj-list').innerHTML = DASHBOARD_DATA.projects.map(p => {
-    const on = Math.round(p.pct / 10);
-    let dots = '';
-    for(let i = 0; i < 10; i++) dots += `<span class="proj-dot ${i < on ? 'on' : ''}"></span>`;
-    return `<div class="proj-row"><span class="proj-name">${p.name}</span><span class="proj-dots">${dots}</span><span class="proj-pct">${p.pct}%</span></div>`;
-  }).join('');
 }
 
 /* ---------------- Goals ---------------- */
@@ -506,7 +577,8 @@ function renderGoals(){
 
 /* ---------------- Up next ---------------- */
 function renderUpNext(){
-  document.getElementById('upnext-list').innerHTML = DASHBOARD_DATA.upNext.map(u => {
+  const items = DASHBOARD_DATA.upNext || [];
+  document.getElementById('upnext-list').innerHTML = items.map(u => {
     const right = u.fixedLabel ? u.fixedLabel : `In ${u.inDays} day${u.inDays===1?'':'s'}`;
     return `<div class="up-row">
       <div class="up-left">

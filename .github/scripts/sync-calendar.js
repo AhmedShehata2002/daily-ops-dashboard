@@ -1,5 +1,5 @@
 const https = require('https');
-const fs = require('fs');
+const fs    = require('fs');
 
 const TZ = 'Africa/Cairo';
 
@@ -32,9 +32,8 @@ function calUrl(key, calId, extra) {
 }
 
 async function main() {
-  const key        = process.env.GCAL_API_KEY;
-  const calId      = process.env.GCAL_CALENDAR_ID;
-  const tasksCalId = process.env.GCAL_TASKS_ID;   // optional Tasks calendar
+  const key   = process.env.GCAL_API_KEY;
+  const calId = process.env.GCAL_CALENDAR_ID;
 
   if (!key || !calId) {
     console.error('Missing GCAL_API_KEY or GCAL_CALENDAR_ID — skipping sync.');
@@ -47,9 +46,8 @@ async function main() {
   const todayEnd   = new Date(`${todayStr}T23:59:59+02:00`).toISOString();
   const futureEnd  = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000).toISOString();
 
-  // Fetch main calendar (events today + upcoming)
   const [todayData, upcomingData] = await Promise.all([
-    get(calUrl(key, calId, `timeMin=${todayStart}&timeMax=${todayEnd}&maxResults=10`)),
+    get(calUrl(key, calId, `timeMin=${todayStart}&timeMax=${todayEnd}&maxResults=20`)),
     get(calUrl(key, calId, `timeMin=${now.toISOString()}&timeMax=${futureEnd}&maxResults=8`))
   ]).catch(err => { console.error('Calendar fetch failed:', err.message); process.exit(1); });
 
@@ -58,42 +56,36 @@ async function main() {
     process.exit(1);
   }
 
-  const calendar = (todayData.items || []).map(ev => ({
-    time:  ev.start.dateTime ? formatTime(ev.start.dateTime) : 'All day',
-    label: ev.summary || 'Untitled'
-  }));
+  const items = todayData.items || [];
 
-  const upNext = (upcomingData.items || []).slice(0, 6).map(ev => ({
-    title:  ev.summary || 'Untitled',
-    inDays: daysBetween(ev.start.dateTime || ev.start.date, now)
-  }));
+  // All-day events (date only, no dateTime) → TODAY tasks
+  const today = items
+    .filter(ev => ev.start.date && !ev.start.dateTime)
+    .map(ev => ({ label: ev.summary || 'Untitled', done: false }));
+
+  // Timed events (dateTime) → CALENDAR
+  const calendar = items
+    .filter(ev => ev.start.dateTime)
+    .map(ev => ({ time: formatTime(ev.start.dateTime), label: ev.summary || 'Untitled' }));
+
+  // Upcoming events (skip all-day) → UP NEXT
+  const upNext = (upcomingData.items || [])
+    .filter(ev => ev.start.dateTime)
+    .slice(0, 6)
+    .map(ev => ({
+      title:  ev.summary || 'Untitled',
+      inDays: daysBetween(ev.start.dateTime, now)
+    }));
 
   const dataPath = 'data.json';
   const current  = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
-  current.calendar = calendar.length ? calendar : current.calendar;
-  current.upNext   = upNext.length   ? upNext   : current.upNext;
 
-  // Fetch Tasks calendar → Today card (optional, uses same API key)
-  if (tasksCalId) {
-    try {
-      const tasksData = await get(
-        calUrl(key, tasksCalId, `timeMin=${todayStart}&timeMax=${todayEnd}&maxResults=10`)
-      );
-      const tasks = (tasksData.items || []).map(ev => ({
-        label: ev.summary || 'Untitled',
-        done:  false
-      }));
-      if (tasks.length > 0) {
-        current.today = tasks;
-        console.log(`Tasks synced: ${tasks.length} items from Tasks calendar.`);
-      }
-    } catch (err) {
-      console.warn('Tasks calendar fetch failed (non-fatal):', err.message);
-    }
-  }
+  if (today.length)    current.today    = today;
+  if (calendar.length) current.calendar = calendar;
+  if (upNext.length)   current.upNext   = upNext;
 
   fs.writeFileSync(dataPath, JSON.stringify(current, null, 2) + '\n');
-  console.log(`Calendar synced: ${calendar.length} events today, ${upNext.length} upcoming.`);
+  console.log(`Synced: ${today.length} tasks, ${calendar.length} events, ${upNext.length} upcoming.`);
 }
 
 main().catch(err => { console.error(err); process.exit(1); });
