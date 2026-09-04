@@ -13,7 +13,14 @@
   },
   "gcal": {
     "tasks": [],
-    "events": [],
+    "events": [
+      {
+        "time": "19:00",
+        "label": "nana doc ",
+        "startMs": 1788624000000,
+        "endMs": 1788627600000
+      }
+    ],
     "upcoming": [
       {
         "title": "nana doc ",
@@ -24,7 +31,7 @@
         "inDays": 3
       }
     ],
-    "syncedAt": "2026-09-04T19:54:36.193Z",
+    "syncedAt": "2026-09-04T22:07:08.517Z",
     "error": null
   }
 }
