@@ -6,24 +6,8 @@
     "next": "Derivatives"
   },
   "ellie": {
-    "tasks": [
-      {
-        "label": "Student REGISTRATION BIRMINGHAM / CALL EM ",
-        "done": false,
-        "dueDate": null
-      },
-      {
-        "label": "CFA STUDY \n",
-        "done": false,
-        "dueDate": null
-      },
-      {
-        "label": "Clinical Intake AI",
-        "done": false,
-        "dueDate": null
-      }
-    ],
-    "syncedAt": "2026-09-04T12:03:39.616Z",
+    "tasks": [],
+    "syncedAt": "2026-09-04T15:06:49.428Z",
     "connected": true,
     "error": null
   },
