@@ -105,14 +105,23 @@ async function callTool(mcpUrl, apiKey, name, args) {
 }
 
 function findTaskTool(tools) {
-  const priority = ['list_tasks', 'get_tasks', 'getTasks', 'listTasks', 'tasks'];
+  // Prefer tools that return a list for a date (best for daily dashboard)
+  const priority = [
+    'get_tasks_by_date', 'list_tasks', 'get_tasks', 'getTasks',
+    'listTasks', 'get_braindump', 'tasks'
+  ];
   for (const name of priority) {
     if (tools.find(t => t.name === name)) return name;
   }
-  return tools.find(t =>
-    t.name.toLowerCase().includes('task') ||
-    (t.description && t.description.toLowerCase().includes('task'))
-  )?.name || null;
+  // Fallback: any tool with "tasks" (plural) in name
+  return tools.find(t => t.name.toLowerCase().includes('tasks'))?.name || null;
+}
+
+function toolArgs(toolName) {
+  const TZ  = 'Africa/Cairo';
+  const today = new Date().toLocaleDateString('en-CA', { timeZone: TZ });
+  if (toolName === 'get_tasks_by_date') return { date: today };
+  return {};
 }
 
 function normaliseTask(raw) {
@@ -169,7 +178,7 @@ async function main() {
     if (!toolName) throw new Error('No task tool found. Tools: ' + tools.map(t => t.name).join(', '));
     console.log(`Using tool: ${toolName}`);
 
-    const result   = await callTool(mcpUrl, apiKey, toolName, {});
+    const result   = await callTool(mcpUrl, apiKey, toolName, toolArgs(toolName));
     const rawTasks = extractTasks(result);
     const tasks    = rawTasks.map(normaliseTask);
 
