@@ -1,0 +1,19 @@
+{
+  "name": "Daily Ops",
+  "short_name": "Daily Ops",
+  "description": "Personal operations dashboard",
+  "start_url": "/daily-ops-dashboard/",
+  "scope": "/daily-ops-dashboard/",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='32' fill='%230a0a0a'/%3E%3Ccircle cx='60' cy='60' r='8' fill='%23f2f1ec'/%3E%3Ccircle cx='96' cy='60' r='8' fill='%23f2f1ec'/%3E%3Ccircle cx='132' cy='60' r='8' fill='%23f2f1ec'/%3E%3Ccircle cx='60' cy='96' r='8' fill='%23f2f1ec'/%3E%3Ccircle cx='96' cy='96' r='8' fill='%23f2f1ec'/%3E%3Ccircle cx='132' cy='96' r='8' fill='%23f2f1ec'/%3E%3Ccircle cx='60' cy='132' r='8' fill='%23f2f1ec'/%3E%3Ccircle cx='96' cy='132' r='8' fill='%23f2f1ec'/%3E%3Ccircle cx='132' cy='132' r='8' fill='%23f2f1ec'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

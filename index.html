@@ -6,7 +6,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Daily Ops">
+<meta name="theme-color" content="#0a0a0a">
 <title>Daily Ops</title>
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -23,6 +25,9 @@
     --radius:18px;
     --font-mono:'JetBrains Mono', ui-monospace, monospace;
     --font-dot:'Silkscreen', var(--font-mono);
+    --warn:#c47c2b;
+    --error:#c43b2b;
+    --ok:#4caf7a;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
   html,body{
@@ -79,22 +84,34 @@
   .card-menu{ color:var(--text-3); font-size:16px; letter-spacing:2px; }
   .card-sub{ font-size:10.5px; color:var(--text-3); letter-spacing:1px; margin:-2px 0 8px 20px; }
 
-  /* Today */
+  /* ---------- Skeleton ---------- */
+  .skeleton{ height:12px; border-radius:4px; background:var(--border); margin:6px 0; animation:pulse 1.6s ease-in-out infinite; }
+  .skeleton.w60{ width:60%; }
+  .skeleton.w80{ width:80%; }
+  .skeleton.w40{ width:40%; }
+  @keyframes pulse{ 0%,100%{opacity:.4} 50%{opacity:.9} }
+
+  /* ---------- Stale badge ---------- */
+  .stale-badge{
+    display:inline-block; font-size:8px; color:var(--warn); letter-spacing:1px;
+    border:1px solid var(--warn); border-radius:3px; padding:1px 5px; margin-left:8px; opacity:.7;
+  }
+
+  /* ---------- Today / Tasks ---------- */
   .task-row{ display:flex; align-items:center; gap:11px; padding:6px 0; font-size:13px; }
   .checkbox{ width:15px; height:15px; border-radius:4px; border:1.4px solid var(--text-3); flex-shrink:0; display:flex; align-items:center; justify-content:center; }
   .checkbox.checked{ background:var(--text-1); border-color:var(--text-1); }
   .checkbox.checked svg{ width:9px; height:9px; }
   .task-row.done .task-label{ color:var(--text-3); text-decoration:line-through; }
   .task-list{ flex:1; overflow:hidden; }
-  .add-task{ display:flex; align-items:center; gap:11px; padding-top:9px; margin-top:6px; border-top:1px solid var(--border-soft); font-size:13px; color:var(--text-2); }
 
-  /* CFA */
+  /* ---------- CFA ---------- */
   .cfa-body{ display:flex; align-items:center; gap:26px; flex:1; }
   .cfa-info{ display:flex; flex-direction:column; gap:14px; font-size:12.5px; }
   .cfa-label{ color:var(--text-3); letter-spacing:1px; font-size:10.5px; margin-bottom:3px; }
   .cfa-value{ color:var(--text-1); font-size:14px; }
 
-  /* Prayer Times */
+  /* ---------- Prayer Times ---------- */
   .prayer-list{ flex:1; display:flex; flex-direction:column; justify-content:center; }
   .prayer-row{ display:flex; align-items:center; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border-soft); }
   .prayer-row:last-child{ border-bottom:none; }
@@ -105,7 +122,13 @@
   .prayer-row.next .prayer-time{ color:var(--text-1); font-size:14px; }
   .next-badge{ font-size:8px; color:var(--text-3); letter-spacing:1px; border:1px solid var(--border); border-radius:3px; padding:1px 5px; }
 
-  /* Focus Timer */
+  /* ---------- Calendar ---------- */
+  .cal-row{ display:flex; align-items:center; gap:12px; padding:6px 0; font-size:13px; }
+  .cal-time{ color:var(--text-2); width:44px; flex-shrink:0; }
+  .cal-dot{ width:6px; height:6px; border-radius:50%; background:var(--text-3); flex-shrink:0; }
+  .cal-footer{ display:flex; justify-content:space-between; align-items:center; padding-top:9px; margin-top:auto; border-top:1px solid var(--border-soft); font-size:12px; color:var(--text-2); }
+
+  /* ---------- Focus Timer ---------- */
   .timer-body{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:space-between; padding-top:2px; }
   .timer-mode-row{ display:flex; gap:18px; }
   .timer-mode-btn{
@@ -129,22 +152,43 @@
   .timer-btn.go{ border-color:var(--text-2); color:var(--text-1); }
   .timer-sessions{ font-size:9.5px; color:var(--text-3); letter-spacing:1px; }
 
-  /* Calendar */
-  .cal-row{ display:flex; align-items:center; gap:12px; padding:6px 0; font-size:13px; }
-  .cal-time{ color:var(--text-2); width:44px; flex-shrink:0; }
-  .cal-dot{ width:6px; height:6px; border-radius:50%; background:var(--text-3); flex-shrink:0; }
-  .cal-footer{ display:flex; justify-content:space-between; align-items:center; padding-top:9px; margin-top:auto; border-top:1px solid var(--border-soft); font-size:12px; color:var(--text-2); }
+  /* ---------- Attention ---------- */
+  .attention-list{ flex:1; display:flex; flex-direction:column; justify-content:center; gap:2px; }
+  .att-item{ display:flex; align-items:flex-start; gap:8px; padding:5px 0; font-size:12px; line-height:1.4; border-bottom:1px solid var(--border-soft); }
+  .att-item:last-child{ border-bottom:none; }
+  .att-icon{ width:14px; height:14px; border-radius:50%; flex-shrink:0; margin-top:1px; display:flex; align-items:center; justify-content:center; font-size:8px; font-weight:700; }
+  .att-icon.urgent{ background:var(--error); color:#fff; }
+  .att-icon.warn  { background:var(--warn);  color:#fff; }
+  .att-icon.info  { background:var(--border); color:var(--text-2); }
+  .att-text{ color:var(--text-2); }
+  .att-clear{ font-size:12px; color:var(--text-3); letter-spacing:1px; text-align:center; padding:16px 0; }
 
-  /* Goals */
-  .goal-list{ flex:1; overflow:hidden; display:flex; flex-direction:column; justify-content:center; gap:1px; }
-  .goal-item{ display:flex; align-items:flex-start; gap:10px; padding:5px 0; font-size:12.5px; line-height:1.4; }
-  .goal-bullet{ width:5px; height:5px; border-radius:50%; background:var(--text-3); flex-shrink:0; margin-top:5px; }
-  .goal-text{ color:var(--text-2); }
-
-  /* Up next */
+  /* ---------- Up Next ---------- */
   .up-row{ display:flex; align-items:center; justify-content:space-between; padding:7px 0; font-size:13px; }
   .up-left{ display:flex; align-items:center; gap:10px; }
   .up-right{ color:var(--text-2); font-size:12px; flex-shrink:0; }
+
+  /* ---------- Day Status ---------- */
+  .daystatus-body{ flex:1; display:flex; flex-direction:column; justify-content:center; gap:10px; }
+  .status-label{
+    font-family:var(--font-dot); font-size:22px; letter-spacing:2px; text-align:center;
+    padding:6px 0;
+  }
+  .status-label.on-track { color:var(--ok); }
+  .status-label.tight    { color:var(--warn); }
+  .status-label.overloaded{ color:var(--error); }
+  .status-label.clear    { color:var(--text-3); }
+  .status-row{ display:flex; justify-content:space-between; font-size:11px; color:var(--text-3); letter-spacing:1px; }
+  .status-val{ color:var(--text-2); }
+  .progress-bar{ height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
+  .progress-bar-fill{ height:100%; background:var(--dot-fill); border-radius:2px; transition:width .4s; }
+
+  /* ---------- This Week ---------- */
+  .week-list{ flex:1; display:flex; flex-direction:column; justify-content:center; gap:2px; }
+  .week-row{ display:flex; align-items:center; justify-content:space-between; padding:6px 0; font-size:12px; border-bottom:1px solid var(--border-soft); }
+  .week-row:last-child{ border-bottom:none; }
+  .week-key{ color:var(--text-3); letter-spacing:1px; }
+  .week-val{ color:var(--text-1); }
 
   svg{ display:block; }
 </style>
@@ -212,12 +256,15 @@
           <div class="card-title"><span class="ring"></span>TODAY</div>
           <div class="card-menu">⋮</div>
         </div>
-        <div class="card-sub">ALL-DAY EVENTS · GOOGLE CAL</div>
-        <div class="task-list" id="task-list"></div>
-        <div class="add-task">+ &nbsp;Add task</div>
+        <div class="card-sub" id="today-sub">LOADING...</div>
+        <div class="task-list" id="task-list">
+          <div class="skeleton w80"></div>
+          <div class="skeleton w60"></div>
+          <div class="skeleton w80"></div>
+        </div>
       </div>
 
-      <!-- CFA -->
+      <!-- CFA LEVEL I — LOCKED, DO NOT CHANGE -->
       <div class="card" id="card-cfa">
         <div class="card-head">
           <div class="card-title"><span class="ring"></span>CFA LEVEL I</div>
@@ -241,7 +288,11 @@
         </div>
         <div class="card-sub">CAIRO · AUTO</div>
         <div class="prayer-list" id="prayer-list">
-          <div style="color:var(--text-3);font-size:12px">Loading...</div>
+          <div class="skeleton w60"></div>
+          <div class="skeleton w40"></div>
+          <div class="skeleton w60"></div>
+          <div class="skeleton w40"></div>
+          <div class="skeleton w60"></div>
         </div>
       </div>
 
@@ -251,8 +302,12 @@
           <div class="card-title"><span class="ring"></span>CALENDAR</div>
           <div class="card-menu">⋮</div>
         </div>
-        <div id="cal-list"></div>
-        <div class="cal-footer"><span>View full day</span><span>→</span></div>
+        <div id="cal-list">
+          <div class="skeleton w80"></div>
+          <div class="skeleton w60"></div>
+          <div class="skeleton w80"></div>
+        </div>
+        <div class="cal-footer"><span>GOOGLE CAL</span><span id="cal-synced">—</span></div>
       </div>
 
       <!-- FOCUS TIMER -->
@@ -278,14 +333,17 @@
         </div>
       </div>
 
-      <!-- LONG TERM GOALS -->
-      <div class="card" id="card-goals-long">
+      <!-- ATTENTION -->
+      <div class="card" id="card-attention">
         <div class="card-head">
-          <div class="card-title"><span class="ring"></span>LONG TERM</div>
+          <div class="card-title"><span class="ring"></span>ATTENTION</div>
           <div class="card-menu">⋮</div>
         </div>
-        <div class="card-sub">1–5 YEARS</div>
-        <div class="goal-list" id="goals-long-list"></div>
+        <div class="card-sub">DERIVED · LIVE</div>
+        <div class="attention-list" id="attention-list">
+          <div class="skeleton w80"></div>
+          <div class="skeleton w60"></div>
+        </div>
       </div>
 
       <!-- UP NEXT -->
@@ -294,159 +352,241 @@
           <div class="card-title"><span class="ring"></span>UP NEXT</div>
           <div class="card-menu">⋮</div>
         </div>
-        <div id="upnext-list"></div>
+        <div id="upnext-list">
+          <div class="skeleton w80"></div>
+          <div class="skeleton w60"></div>
+        </div>
       </div>
 
-      <!-- MID TERM GOALS -->
-      <div class="card" id="card-goals-mid">
+      <!-- DAY STATUS -->
+      <div class="card" id="card-day-status">
         <div class="card-head">
-          <div class="card-title"><span class="ring"></span>MID TERM</div>
+          <div class="card-title"><span class="ring"></span>DAY STATUS</div>
           <div class="card-menu">⋮</div>
         </div>
-        <div class="card-sub">3–12 MONTHS</div>
-        <div class="goal-list" id="goals-mid-list"></div>
+        <div class="card-sub">DERIVED · LIVE</div>
+        <div class="daystatus-body" id="daystatus-body">
+          <div class="skeleton w60"></div>
+          <div class="skeleton w80"></div>
+          <div class="skeleton w40"></div>
+        </div>
       </div>
 
-      <!-- SHORT TERM GOALS -->
-      <div class="card" id="card-goals-short">
+      <!-- THIS WEEK -->
+      <div class="card" id="card-week">
         <div class="card-head">
-          <div class="card-title"><span class="ring"></span>SHORT TERM</div>
+          <div class="card-title"><span class="ring"></span>THIS WEEK</div>
           <div class="card-menu">⋮</div>
         </div>
-        <div class="card-sub">THIS MONTH</div>
-        <div class="goal-list" id="goals-short-list"></div>
+        <div class="card-sub">DERIVED · LIVE</div>
+        <div class="week-list" id="week-list">
+          <div class="skeleton w60"></div>
+          <div class="skeleton w80"></div>
+          <div class="skeleton w40"></div>
+        </div>
       </div>
 
     </div>
   </div>
 </div>
 
+<script src="js/derived.js"></script>
 <script>
+/* ================================================================
+   DATA LAYER
+   ================================================================ */
 const DEFAULT_DATA = {
-  today: [],
-  cfa: { percent: 37, topic: "Fixed Income", progressText: "1h 12m / 1h 30m", next: "Derivatives" },
-  calendar: [],
-  upNext: [{ title: "DUBAI - DECE 2026", inDays: 4 }],
-  goalsLong:  ["Pass CFA Level I & II", "Complete MSc Data Science", "Launch AEROME operations", "Build financial independence"],
-  goalsMid:   ["Pass CFA June 2026 exam", "Submit MSc thesis draft", "Close first AEROME contract"],
-  goalsShort: ["Complete Fixed Income module", "Finish regression assignment", "Study 2h daily this week"]
+  cfa:   { percent: 0, topic: '—', progressText: '—', next: '—' },
+  ellie: { tasks: [], syncedAt: null, connected: false, error: null },
+  gcal:  { tasks: [], events: [], upcoming: [], syncedAt: null, error: null }
 };
 
-let DASHBOARD_DATA = DEFAULT_DATA;
+let DASHBOARD_DATA  = DEFAULT_DATA;
+let lastDataFetchOk = false;
 const DATA_REFRESH_MS = 5 * 60 * 1000;
-let dataFetchFailedOnce = false;
 
-async function loadData(){
-  try{
+async function loadData() {
+  try {
     const res = await fetch(`data.json?t=${Date.now()}`, { cache: 'no-store' });
-    if(!res.ok) throw new Error(`HTTP ${res.status}`);
-    DASHBOARD_DATA = await res.json();
-    dataFetchFailedOnce = false;
-  }catch(e){
-    if(!dataFetchFailedOnce){ console.warn('data.json unavailable — using fallback.', e); dataFetchFailedOnce = true; }
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const fresh = await res.json();
+    // Merge — keep existing keys if not present in fresh
+    DASHBOARD_DATA  = Object.assign({}, DEFAULT_DATA, fresh);
+    lastDataFetchOk = true;
+  } catch (e) {
+    if (!lastDataFetchOk) console.warn('data.json unavailable — using fallback.', e);
+    lastDataFetchOk = false;
   }
   renderAll();
 }
 
-function renderAll(){
+function renderAll() {
   renderToday();
   renderCfa();
   renderCalendar();
-  renderGoals();
   renderUpNext();
+  renderAttention();
+  renderDayStatus();
+  renderWeek();
 }
 
-/* ---------------- Clock & date ---------------- */
-function pad(n){ return n.toString().padStart(2,'0'); }
-function updateClock(){
-  const now = new Date();
-  let h = now.getHours();
+/* ================================================================
+   CLOCK & DATE
+   ================================================================ */
+function pad(n) { return n.toString().padStart(2, '0'); }
+
+function updateClock() {
+  const now  = new Date();
+  let h      = now.getHours();
   const ampm = h >= 12 ? 'PM' : 'AM';
   h = h % 12 || 12;
   document.getElementById('clock-time').textContent = `${pad(h)}:${pad(now.getMinutes())}`;
-  document.getElementById('clock-ampm').textContent = ampm;
-  const days   = ["SUN","MON","TUE","WED","THU","FRI","SAT"];
-  const months = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
-  document.getElementById('date-text').textContent = `${days[now.getDay()]}, ${pad(now.getDate())} ${months[now.getMonth()]}`;
+  document.getElementById('clock-ampm').textContent  = ampm;
+  const days   = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  document.getElementById('date-text').textContent =
+    `${days[now.getDay()]}, ${pad(now.getDate())} ${months[now.getMonth()]}`;
 }
 updateClock();
 setInterval(updateClock, 15000);
 
-/* ---------------- Weather ---------------- */
-async function loadWeather(){
-  try{
+/* ================================================================
+   WEATHER
+   ================================================================ */
+async function loadWeather() {
+  try {
     const res  = await fetch('https://api.open-meteo.com/v1/forecast?latitude=30.0444&longitude=31.2357&current_weather=true');
     const json = await res.json();
     document.getElementById('weather-temp').textContent = `${Math.round(json.current_weather.temperature)}\u00b0`;
-  }catch(e){ document.getElementById('weather-temp').textContent = '\u2014'; }
+  } catch (e) { document.getElementById('weather-temp').textContent = '\u2014'; }
 }
 loadWeather();
 setInterval(loadWeather, 30 * 60 * 1000);
 
-/* ---------------- Wake lock ---------------- */
-async function keepAwake(){
-  try{ if('wakeLock' in navigator) await navigator.wakeLock.request('screen'); }catch(e){}
+/* ================================================================
+   WAKE LOCK
+   ================================================================ */
+async function keepAwake() {
+  try { if ('wakeLock' in navigator) await navigator.wakeLock.request('screen'); } catch (e) {}
 }
 keepAwake();
-document.addEventListener('visibilitychange', () => { if(document.visibilityState==='visible') keepAwake(); });
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') keepAwake(); });
 
-/* ---------------- Prayer Times ---------------- */
+/* ================================================================
+   SERVICE WORKER
+   ================================================================ */
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+/* ================================================================
+   PRAYER TIMES
+   ================================================================ */
 const PRAYER_NAMES = ['Fajr','Dhuhr','Asr','Maghrib','Isha'];
 
-function nextPrayer(timings){
+function nextPrayer(timings) {
   const now  = new Date();
   const mins = now.getHours() * 60 + now.getMinutes();
-  for(const p of PRAYER_NAMES){
-    const [h,m] = timings[p].split(':').map(Number);
-    if(h * 60 + m > mins) return p;
+  for (const p of PRAYER_NAMES) {
+    const [h, m] = timings[p].split(':').map(Number);
+    if (h * 60 + m > mins) return p;
   }
   return PRAYER_NAMES[0];
 }
 
-async function loadPrayer(){
-  try{
-    const res  = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Cairo&country=Egypt&method=5');
-    const json = await res.json();
-    const t    = json.data.timings;
-    const next = nextPrayer(t);
-    document.getElementById('prayer-list').innerHTML = PRAYER_NAMES.map(p => {
-      const isNext  = p === next;
-      const [h, m]  = t[p].split(':').map(Number);
-      const ampm    = h >= 12 ? 'PM' : 'AM';
-      const timeStr = `${pad(h % 12 || 12)}:${pad(m)} ${ampm}`;
-      return `<div class="prayer-row${isNext ? ' next' : ''}">
-        <div class="prayer-left">
-          <span class="prayer-name">${p.toUpperCase()}</span>
-          ${isNext ? '<span class="next-badge">NEXT</span>' : ''}
-        </div>
-        <span class="prayer-time">${timeStr}</span>
-      </div>`;
-    }).join('');
-  }catch(e){
-    document.getElementById('prayer-list').innerHTML = '<div style="color:var(--text-3);font-size:12px">Unable to load</div>';
+async function loadPrayer() {
+  const cacheKey  = `prayer_${new Date().toLocaleDateString('en-CA')}`;
+  const cached    = localStorage.getItem(cacheKey);
+  let timings;
+
+  if (cached) {
+    timings = JSON.parse(cached);
+  } else {
+    try {
+      const res  = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Cairo&country=Egypt&method=5');
+      const json = await res.json();
+      timings    = json.data.timings;
+      localStorage.setItem(cacheKey, JSON.stringify(timings));
+    } catch (e) {
+      document.getElementById('prayer-list').innerHTML =
+        '<div style="color:var(--text-3);font-size:12px">Unable to load</div>';
+      return;
+    }
   }
+
+  const next = nextPrayer(timings);
+  document.getElementById('prayer-list').innerHTML = PRAYER_NAMES.map(p => {
+    const isNext  = p === next;
+    const [h, m]  = timings[p].split(':').map(Number);
+    const ampm    = h >= 12 ? 'PM' : 'AM';
+    const timeStr = `${pad(h % 12 || 12)}:${pad(m)} ${ampm}`;
+    return `<div class="prayer-row${isNext ? ' next' : ''}">
+      <div class="prayer-left">
+        <span class="prayer-name">${p.toUpperCase()}</span>
+        ${isNext ? '<span class="next-badge">NEXT</span>' : ''}
+      </div>
+      <span class="prayer-time">${timeStr}</span>
+    </div>`;
+  }).join('');
 }
 loadPrayer();
 setInterval(loadPrayer, 60 * 60 * 1000);
 
-/* ---------------- Focus Timer ---------------- */
+/* ================================================================
+   FOCUS TIMER — localStorage timestamp persistence
+   ================================================================ */
 const WORK_SECS  = 25 * 60;
 const BREAK_SECS =  5 * 60;
+const TIMER_KEY  = 'focus_timer';
 
-let timerSecs     = WORK_SECS;
-let timerTotal    = WORK_SECS;
-let timerRunning  = false;
-let timerMode     = 'work';
-let timerSessions = 0;
+function todayKey() { return new Date().toISOString().slice(0, 10); }
+
+function timerLoad() {
+  try { return JSON.parse(localStorage.getItem(TIMER_KEY)) || {}; } catch (_) { return {}; }
+}
+
+function timerSave(state) {
+  localStorage.setItem(TIMER_KEY, JSON.stringify(state));
+}
+
+function getSessionCount() {
+  const s = timerLoad();
+  return (s.date === todayKey()) ? (s.sessions || 0) : 0;
+}
+
+function incSessionCount() {
+  const s        = timerLoad();
+  const sessions = (s.date === todayKey() ? (s.sessions || 0) : 0) + 1;
+  timerSave({ ...s, date: todayKey(), sessions });
+  return sessions;
+}
+
+// Timer state
+let timerMode    = 'work';
+let timerRunning = false;
+let timerTotal   = WORK_SECS;
 let timerInterval = null;
 
-function drawTimerRing(){
-  const pct    = 1 - timerSecs / timerTotal;
+// Returns remaining seconds (reads from localStorage timestamps when running)
+function getTimerRemaining() {
+  const s = timerLoad();
+  if (s.running && s.endMs) {
+    const rem = Math.ceil((s.endMs - Date.now()) / 1000);
+    return Math.max(0, rem);
+  }
+  if (s.mode === timerMode && typeof s.remainingMs === 'number') {
+    return Math.ceil(s.remainingMs / 1000);
+  }
+  return timerTotal;
+}
+
+function drawTimerRing(remainingSecs) {
+  const pct    = 1 - remainingSecs / timerTotal;
   const dots   = 48;
   const filled = Math.round(pct * dots);
   const cx = 58, cy = 58, r = 50;
   let inner = '';
-  for(let i = 0; i < dots; i++){
+  for (let i = 0; i < dots; i++) {
     const angle = (i / dots) * Math.PI * 2 - Math.PI / 2;
     const x = cx + r * Math.cos(angle);
     const y = cy + r * Math.sin(angle);
@@ -455,70 +595,102 @@ function drawTimerRing(){
   document.getElementById('timer-svg').innerHTML = inner;
 }
 
-function renderTimer(){
-  const m = Math.floor(timerSecs / 60);
-  const s = timerSecs % 60;
+function renderTimer() {
+  const secs = getTimerRemaining();
+  const m    = Math.floor(secs / 60);
+  const s    = secs % 60;
   document.getElementById('timer-time').textContent = `${pad(m)}:${pad(s)}`;
   const btn = document.getElementById('timer-start');
   btn.textContent = timerRunning ? 'PAUSE' : 'START';
   btn.classList.toggle('go', !timerRunning);
+  const sessions = getSessionCount();
   document.getElementById('timer-sessions').textContent =
-    `${timerSessions} SESSION${timerSessions !== 1 ? 'S' : ''} TODAY`;
-  drawTimerRing();
+    `${sessions} SESSION${sessions !== 1 ? 'S' : ''} TODAY`;
+  drawTimerRing(secs);
 }
 
-function timerTick(){
-  if(timerSecs <= 0){
+function timerTick() {
+  const secs = getTimerRemaining();
+  if (secs <= 0) {
     clearInterval(timerInterval);
     timerRunning = false;
-    if(timerMode === 'work') timerSessions++;
-    switchMode(timerMode === 'work' ? 'break' : 'work');
+    if (timerMode === 'work') incSessionCount();
+    switchTimerMode(timerMode === 'work' ? 'break' : 'work');
     return;
   }
-  timerSecs--;
   renderTimer();
 }
 
-function switchMode(mode){
-  timerMode    = mode;
-  timerTotal   = mode === 'work' ? WORK_SECS : BREAK_SECS;
-  timerSecs    = timerTotal;
+function switchTimerMode(mode) {
+  timerMode  = mode;
+  timerTotal = mode === 'work' ? WORK_SECS : BREAK_SECS;
   timerRunning = false;
   clearInterval(timerInterval);
+  timerSave({ mode, running: false, remainingMs: timerTotal * 1000, date: todayKey(), sessions: getSessionCount() });
   document.getElementById('timer-mode-work').classList.toggle('active',  mode === 'work');
   document.getElementById('timer-mode-break').classList.toggle('active', mode === 'break');
   renderTimer();
 }
 
-document.getElementById('timer-start').addEventListener('click', () => {
-  if(timerRunning){
-    clearInterval(timerInterval);
-    timerRunning = false;
-  } else {
+// Restore state on load
+(function restoreTimer() {
+  const s = timerLoad();
+  if (s.mode) {
+    timerMode  = s.mode;
+    timerTotal = timerMode === 'work' ? WORK_SECS : BREAK_SECS;
+    document.getElementById('timer-mode-work').classList.toggle('active',  timerMode === 'work');
+    document.getElementById('timer-mode-break').classList.toggle('active', timerMode === 'break');
+  }
+  if (s.running && s.endMs && s.endMs > Date.now()) {
     timerRunning  = true;
     timerInterval = setInterval(timerTick, 1000);
   }
   renderTimer();
+})();
+
+document.getElementById('timer-start').addEventListener('click', () => {
+  if (timerRunning) {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    const remaining = getTimerRemaining();
+    timerSave({ ...timerLoad(), running: false, remainingMs: remaining * 1000, endMs: null });
+  } else {
+    const remaining = getTimerRemaining();
+    timerRunning    = true;
+    const endMs     = Date.now() + remaining * 1000;
+    timerSave({ ...timerLoad(), running: true, endMs, mode: timerMode });
+    timerInterval = setInterval(timerTick, 1000);
+  }
+  renderTimer();
 });
+
 document.getElementById('timer-reset').addEventListener('click', () => {
   clearInterval(timerInterval);
   timerRunning = false;
-  timerSecs    = timerTotal;
+  timerSave({ ...timerLoad(), running: false, remainingMs: timerTotal * 1000, endMs: null });
   renderTimer();
 });
-document.getElementById('timer-mode-work').addEventListener('click',  () => switchMode('work'));
-document.getElementById('timer-mode-break').addEventListener('click', () => switchMode('break'));
 
-renderTimer();
+document.getElementById('timer-mode-work').addEventListener('click',  () => switchTimerMode('work'));
+document.getElementById('timer-mode-break').addEventListener('click', () => switchTimerMode('break'));
 
-/* ---------------- Today ---------------- */
-function renderToday(){
-  const tasks = DASHBOARD_DATA.today || [];
-  if(!tasks.length){
+/* ================================================================
+   TODAY
+   ================================================================ */
+function renderToday() {
+  const data   = DASHBOARD_DATA;
+  const tasks  = Derived.getTodaysTasks(data);
+  const source = (data.ellie && data.ellie.connected) ? 'ELLIE · LIVE' : 'GOOGLE CAL · ALL-DAY';
+  document.getElementById('today-sub').textContent = source;
+
+  if (!tasks.length) {
     document.getElementById('task-list').innerHTML =
-      '<div style="color:var(--text-3);font-size:12px;padding:8px 0">Add all-day events in Google Calendar to see tasks here.</div>';
+      '<div style="color:var(--text-3);font-size:12px;padding:8px 0">' +
+      ((data.ellie && data.ellie.connected) ? 'No tasks in Ellie today.' : 'Add all-day events in Google Calendar to see tasks here.') +
+      '</div>';
     return;
   }
+
   document.getElementById('task-list').innerHTML = tasks.map(t => `
     <div class="task-row ${t.done ? 'done' : ''}">
       <div class="checkbox ${t.done ? 'checked' : ''}">
@@ -528,7 +700,9 @@ function renderToday(){
     </div>`).join('');
 }
 
-/* ---------------- CFA ring ---------------- */
+/* ================================================================
+   CFA RING — LOCKED, DO NOT CHANGE
+   ================================================================ */
 function renderCfa(){
   const { percent, topic, progressText, next } = DASHBOARD_DATA.cfa;
   document.getElementById('cfa-topic').textContent    = topic;
@@ -549,50 +723,114 @@ function renderCfa(){
   svg.innerHTML = inner;
 }
 
-/* ---------------- Calendar ---------------- */
-function renderCalendar(){
-  const events = DASHBOARD_DATA.calendar || [];
-  if(!events.length){
-    document.getElementById('cal-list').innerHTML =
-      '<div style="color:var(--text-3);font-size:12px;padding:8px 0">No events today</div>';
+/* ================================================================
+   CALENDAR
+   ================================================================ */
+function formatSyncAge(isoString) {
+  if (!isoString) return '—';
+  const ageMin = Math.round((Date.now() - new Date(isoString).getTime()) / 60000);
+  if (ageMin < 2)  return 'just now';
+  if (ageMin < 60) return `${ageMin}m ago`;
+  return `${Math.round(ageMin / 60)}h ago`;
+}
+
+function renderCalendar() {
+  const events = (DASHBOARD_DATA.gcal && DASHBOARD_DATA.gcal.events) || [];
+  const calList = document.getElementById('cal-list');
+
+  if (!events.length) {
+    calList.innerHTML =
+      '<div style="color:var(--text-3);font-size:12px;padding:8px 0">No timed events today</div>';
+  } else {
+    calList.innerHTML = events.map(e => `
+      <div class="cal-row"><span class="cal-time">${e.time}</span><span class="cal-dot"></span><span>${e.label}</span></div>
+    `).join('');
+  }
+
+  document.getElementById('cal-synced').textContent =
+    formatSyncAge(DASHBOARD_DATA.gcal && DASHBOARD_DATA.gcal.syncedAt);
+}
+
+/* ================================================================
+   UP NEXT
+   ================================================================ */
+function renderUpNext() {
+  const items = Derived.getUpcomingItems(DASHBOARD_DATA);
+  document.getElementById('upnext-list').innerHTML = items.length
+    ? items.map(u => `<div class="up-row">
+        <div class="up-left">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+          <span>${u.title}</span>
+        </div>
+        <span class="up-right">In ${u.inDays} day${u.inDays === 1 ? '' : 's'}</span>
+      </div>`).join('')
+    : '<div style="color:var(--text-3);font-size:12px;padding:8px 0">Nothing upcoming</div>';
+}
+
+/* ================================================================
+   ATTENTION
+   ================================================================ */
+const ATT_ICON = { urgent: '!', warn: '~', info: 'i', error: '!' };
+const ATT_TYPE = { urgent: 'urgent', warn: 'warn', info: 'info', error: 'urgent' };
+
+function renderAttention() {
+  const items = Derived.calculateAttentionItems(DASHBOARD_DATA);
+  const el    = document.getElementById('attention-list');
+
+  if (!items.length) {
+    el.innerHTML = '<div class="att-clear">ALL CLEAR</div>';
     return;
   }
-  document.getElementById('cal-list').innerHTML = events.map(e => `
-    <div class="cal-row"><span class="cal-time">${e.time}</span><span class="cal-dot"></span><span>${e.label}</span></div>
-  `).join('');
+
+  el.innerHTML = items.map(i => `
+    <div class="att-item">
+      <div class="att-icon ${ATT_TYPE[i.type] || 'info'}">${ATT_ICON[i.type] || 'i'}</div>
+      <div class="att-text">${i.text}</div>
+    </div>`).join('');
 }
 
-/* ---------------- Goals ---------------- */
-function renderGoalList(id, items){
-  if(!items || !items.length) return;
-  document.getElementById(id).innerHTML = items.map(g =>
-    `<div class="goal-item"><span class="goal-bullet"></span><span class="goal-text">${g}</span></div>`
-  ).join('');
-}
-function renderGoals(){
-  renderGoalList('goals-long-list',  DASHBOARD_DATA.goalsLong);
-  renderGoalList('goals-mid-list',   DASHBOARD_DATA.goalsMid);
-  renderGoalList('goals-short-list', DASHBOARD_DATA.goalsShort);
-}
+/* ================================================================
+   DAY STATUS
+   ================================================================ */
+const STATUS_CLASS = { 'ON TRACK': 'on-track', 'TIGHT': 'tight', 'OVERLOADED': 'overloaded', 'CLEAR': 'clear' };
 
-/* ---------------- Up next ---------------- */
-function renderUpNext(){
-  const items = DASHBOARD_DATA.upNext || [];
-  document.getElementById('upnext-list').innerHTML = items.map(u => {
-    const right = u.fixedLabel ? u.fixedLabel : `In ${u.inDays} day${u.inDays===1?'':'s'}`;
-    return `<div class="up-row">
-      <div class="up-left">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-        <span>${u.title}</span>
-      </div>
-      <span class="up-right">${right}</span>
+function renderDayStatus() {
+  const { total, done, pct, status } = Derived.calculateDayStatus(DASHBOARD_DATA);
+  const cls = STATUS_CLASS[status] || 'clear';
+
+  document.getElementById('daystatus-body').innerHTML = `
+    <div class="status-label ${cls}">${status}</div>
+    <div class="progress-bar"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+    <div class="status-row">
+      <span>TASKS DONE</span>
+      <span class="status-val">${done} / ${total}</span>
+    </div>
+    <div class="status-row">
+      <span>COMPLETION</span>
+      <span class="status-val">${pct}%</span>
     </div>`;
-  }).join('');
 }
 
-/* ---------------- Init ---------------- */
+/* ================================================================
+   THIS WEEK
+   ================================================================ */
+function renderWeek() {
+  const { tasksTotal, tasksDone, overdue, focusSessions } = Derived.calculateWeeklyStats(DASHBOARD_DATA);
+
+  document.getElementById('week-list').innerHTML = `
+    <div class="week-row"><span class="week-key">TODAY'S TASKS</span><span class="week-val">${tasksDone} / ${tasksTotal}</span></div>
+    <div class="week-row"><span class="week-key">OVERDUE</span><span class="week-val" style="color:${overdue > 0 ? 'var(--warn)' : 'var(--text-1)'}">${overdue}</span></div>
+    <div class="week-row"><span class="week-key">FOCUS SESSIONS</span><span class="week-val">${focusSessions}</span></div>
+    <div class="week-row"><span class="week-key">DATA SOURCE</span><span class="week-val" style="font-size:10px">${(DASHBOARD_DATA.ellie && DASHBOARD_DATA.ellie.connected) ? 'ELLIE' : 'GCAL'}</span></div>`;
+}
+
+/* ================================================================
+   INIT
+   ================================================================ */
 loadData();
 setInterval(loadData, DATA_REFRESH_MS);
+// Re-render derived cards every minute (time-sensitive: staleness checks)
+setInterval(() => { renderAttention(); renderDayStatus(); renderCalendar(); }, 60 * 1000);
 </script>
 </body>
 </html>
