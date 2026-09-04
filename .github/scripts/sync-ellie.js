@@ -180,6 +180,8 @@ async function main() {
 
     const result   = await callTool(mcpUrl, apiKey, toolName, toolArgs(toolName));
     const rawTasks = extractTasks(result);
+    // Log first raw task so we can see the field structure
+    if (rawTasks.length > 0) console.log('RAW TASK SAMPLE:', JSON.stringify(rawTasks[0], null, 2));
     const tasks    = rawTasks.map(normaliseTask);
 
     current.ellie = { tasks, syncedAt: new Date().toISOString(), connected: true, error: null };
