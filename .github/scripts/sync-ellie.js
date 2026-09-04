@@ -125,9 +125,10 @@ function toolArgs(toolName) {
 }
 
 function normaliseTask(raw) {
+  // Ellie uses `description` as the task name, `complete` as done timestamp (null = not done)
   return {
-    label:   raw.title || raw.name || raw.label || raw.summary || 'Untitled',
-    done:    !!(raw.completed || raw.done || raw.finished || raw.status === 'done'),
+    label:   raw.description || raw.title || raw.name || raw.label || raw.summary || 'Untitled',
+    done:    !!(raw.complete || raw.completed_at || raw.completed || raw.done || raw.finished),
     dueDate: raw.due_date || raw.dueDate || raw.due || null
   };
 }
@@ -180,8 +181,6 @@ async function main() {
 
     const result   = await callTool(mcpUrl, apiKey, toolName, toolArgs(toolName));
     const rawTasks = extractTasks(result);
-    // Log first raw task so we can see the field structure
-    if (rawTasks.length > 0) console.log('RAW TASK SAMPLE:', JSON.stringify(rawTasks[0], null, 2));
     const tasks    = rawTasks.map(normaliseTask);
 
     current.ellie = { tasks, syncedAt: new Date().toISOString(), connected: true, error: null };
