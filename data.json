@@ -28,49 +28,11 @@
     "error": null
   },
   "gcal": {
-    "tasks": [
-      {
-        "label": "CFA – Ethics practice (30 Qs)",
-        "done": false
-      },
-      {
-        "label": "Study Derivatives (MCQs)",
-        "done": false
-      },
-      {
-        "label": "MSc: Regression assignment",
-        "done": false
-      },
-      {
-        "label": "AEROME: Study Chapter 3",
-        "done": false
-      },
-      {
-        "label": "Read 20 pages",
-        "done": false
-      }
-    ],
-    "events": [
-      {
-        "time": "09:00",
-        "label": "Work"
-      },
-      {
-        "time": "13:30",
-        "label": "Lunch"
-      },
-      {
-        "time": "18:00",
-        "label": "Gym"
-      },
-      {
-        "time": "20:30",
-        "label": "CFA Study"
-      }
-    ],
+    "tasks": [],
+    "events": [],
     "upcoming": [
       {
-        "title": "nana doc",
+        "title": "nana doc ",
         "inDays": 2
       },
       {
@@ -78,7 +40,7 @@
         "inDays": 3
       }
     ],
-    "syncedAt": null,
+    "syncedAt": "2026-09-04T12:03:46.822Z",
     "error": null
   }
 }
