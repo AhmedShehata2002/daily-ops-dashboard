@@ -13,21 +13,14 @@
   },
   "gcal": {
     "tasks": [],
-    "events": [
-      {
-        "time": "19:00",
-        "label": "nana doc ",
-        "startMs": 1788624000000,
-        "endMs": 1788627600000
-      }
-    ],
+    "events": [],
     "upcoming": [
       {
         "title": "DUBAI - DECE 2026",
         "inDays": 2
       }
     ],
-    "syncedAt": "2026-09-05T20:56:13.207Z",
+    "syncedAt": "2026-09-05T22:41:21.642Z",
     "error": null
   }
 }
