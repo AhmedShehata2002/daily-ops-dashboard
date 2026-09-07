@@ -13,16 +13,9 @@
   },
   "gcal": {
     "tasks": [],
-    "events": [
-      {
-        "time": "12:00",
-        "label": "DUBAI - DECE 2026",
-        "startMs": 1788771600000,
-        "endMs": 1788775200000
-      }
-    ],
+    "events": [],
     "upcoming": [],
-    "syncedAt": "2026-09-07T19:13:21.290Z",
+    "syncedAt": "2026-09-07T22:04:36.012Z",
     "error": null
   }
 }
