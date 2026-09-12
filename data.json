@@ -13,14 +13,21 @@
   },
   "gcal": {
     "tasks": [],
-    "events": [],
+    "events": [
+      {
+        "time": "10:30",
+        "label": "Doc appointment (wisdom)",
+        "startMs": 1789284600000,
+        "endMs": 1789288200000
+      }
+    ],
     "upcoming": [
       {
         "title": "Doc appointment (wisdom)",
         "inDays": 1
       }
     ],
-    "syncedAt": "2026-09-12T20:39:33.520Z",
+    "syncedAt": "2026-09-12T22:33:06.521Z",
     "error": null
   }
 }
