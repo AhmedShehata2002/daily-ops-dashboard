@@ -14,8 +14,13 @@
   "gcal": {
     "tasks": [],
     "events": [],
-    "upcoming": [],
-    "syncedAt": "2026-09-22T07:23:42.560Z",
+    "upcoming": [
+      {
+        "title": "prozac refill",
+        "inDays": 14
+      }
+    ],
+    "syncedAt": "2026-09-22T12:45:13.947Z",
     "error": null
   }
 }
