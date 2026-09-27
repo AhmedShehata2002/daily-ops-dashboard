@@ -17,14 +17,14 @@
     "upcoming": [
       {
         "title": "prozac refill",
-        "inDays": 10
+        "inDays": 9
       },
       {
         "title": "caline appt",
-        "inDays": 11
+        "inDays": 10
       }
     ],
-    "syncedAt": "2026-09-27T03:46:00.206Z",
+    "syncedAt": "2026-09-27T09:32:47.370Z",
     "error": null
   }
 }
