@@ -13,7 +13,14 @@
   },
   "gcal": {
     "tasks": [],
-    "events": [],
+    "events": [
+      {
+        "time": "11:00",
+        "label": "prozac refill",
+        "startMs": 1791273600000,
+        "endMs": 1791277200000
+      }
+    ],
     "upcoming": [
       {
         "title": "prozac refill",
@@ -24,7 +31,7 @@
         "inDays": 2
       }
     ],
-    "syncedAt": "2026-10-05T18:45:21.054Z",
+    "syncedAt": "2026-10-06T00:22:50.459Z",
     "error": null
   }
 }
