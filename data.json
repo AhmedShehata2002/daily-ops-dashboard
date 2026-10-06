@@ -16,9 +16,9 @@
     "events": [
       {
         "time": "11:00",
-        "label": "prozac refill",
-        "startMs": 1791273600000,
-        "endMs": 1791277200000
+        "label": "caline appt",
+        "startMs": 1791360000000,
+        "endMs": 1791363600000
       }
     ],
     "upcoming": [
@@ -27,7 +27,7 @@
         "inDays": 1
       }
     ],
-    "syncedAt": "2026-10-06T19:05:17.599Z",
+    "syncedAt": "2026-10-06T23:00:17.987Z",
     "error": null
   }
 }
