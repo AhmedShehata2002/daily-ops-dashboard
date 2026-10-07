@@ -21,13 +21,8 @@
         "endMs": 1791363600000
       }
     ],
-    "upcoming": [
-      {
-        "title": "caline appt",
-        "inDays": 0
-      }
-    ],
-    "syncedAt": "2026-10-07T08:47:53.068Z",
+    "upcoming": [],
+    "syncedAt": "2026-10-07T15:48:51.325Z",
     "error": null
   }
 }
