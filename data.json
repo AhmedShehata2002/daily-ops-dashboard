@@ -13,16 +13,9 @@
   },
   "gcal": {
     "tasks": [],
-    "events": [
-      {
-        "time": "11:00",
-        "label": "caline appt",
-        "startMs": 1791360000000,
-        "endMs": 1791363600000
-      }
-    ],
+    "events": [],
     "upcoming": [],
-    "syncedAt": "2026-10-07T20:49:33.979Z",
+    "syncedAt": "2026-10-08T00:28:06.556Z",
     "error": null
   }
 }
