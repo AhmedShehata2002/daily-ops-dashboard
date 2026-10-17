@@ -13,14 +13,21 @@
   },
   "gcal": {
     "tasks": [],
-    "events": [],
+    "events": [
+      {
+        "time": "12:00",
+        "label": "Meeting with someone",
+        "startMs": 1792314000000,
+        "endMs": 1792317600000
+      }
+    ],
     "upcoming": [
       {
         "title": "Meeting with someone",
         "inDays": 1
       }
     ],
-    "syncedAt": "2026-10-17T20:48:32.529Z",
+    "syncedAt": "2026-10-17T22:42:14.015Z",
     "error": null
   }
 }
