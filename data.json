@@ -14,8 +14,13 @@
   "gcal": {
     "tasks": [],
     "events": [],
-    "upcoming": [],
-    "syncedAt": "2026-10-17T18:20:28.447Z",
+    "upcoming": [
+      {
+        "title": "Meeting with someone",
+        "inDays": 1
+      }
+    ],
+    "syncedAt": "2026-10-17T20:48:32.529Z",
     "error": null
   }
 }
