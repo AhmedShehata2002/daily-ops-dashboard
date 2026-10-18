@@ -12,17 +12,15 @@
     "error": null
   },
   "gcal": {
-    "tasks": [],
-    "events": [
+    "tasks": [
       {
-        "time": "12:00",
-        "label": "Meeting with someone",
-        "startMs": 1792314000000,
-        "endMs": 1792317600000
+        "label": "health summit - abu dhabi ",
+        "done": false
       }
     ],
+    "events": [],
     "upcoming": [],
-    "syncedAt": "2026-10-18T18:59:24.944Z",
+    "syncedAt": "2026-10-18T21:22:52.995Z",
     "error": null
   }
 }
