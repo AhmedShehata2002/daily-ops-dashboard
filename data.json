@@ -21,13 +21,8 @@
         "endMs": 1792317600000
       }
     ],
-    "upcoming": [
-      {
-        "title": "Meeting with someone",
-        "inDays": 0
-      }
-    ],
-    "syncedAt": "2026-10-18T09:22:18.355Z",
+    "upcoming": [],
+    "syncedAt": "2026-10-18T13:25:05.930Z",
     "error": null
   }
 }
