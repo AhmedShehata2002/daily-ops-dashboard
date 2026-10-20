@@ -12,15 +12,10 @@
     "error": null
   },
   "gcal": {
-    "tasks": [
-      {
-        "label": "health summit - abu dhabi ",
-        "done": false
-      }
-    ],
+    "tasks": [],
     "events": [],
     "upcoming": [],
-    "syncedAt": "2026-10-20T20:50:46.683Z",
+    "syncedAt": "2026-10-20T23:37:23.800Z",
     "error": null
   }
 }
