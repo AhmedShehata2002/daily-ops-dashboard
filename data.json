@@ -27,13 +27,8 @@
         "endMs": 1792665000000
       }
     ],
-    "upcoming": [
-      {
-        "title": "Untitled",
-        "inDays": 0
-      }
-    ],
-    "syncedAt": "2026-10-22T10:00:55.381Z",
+    "upcoming": [],
+    "syncedAt": "2026-10-22T15:11:11.574Z",
     "error": null
   }
 }
