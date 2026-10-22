@@ -29,15 +29,11 @@
     ],
     "upcoming": [
       {
-        "title": "Book tooth appointment",
-        "inDays": 1
-      },
-      {
         "title": "Untitled",
-        "inDays": 1
+        "inDays": 0
       }
     ],
-    "syncedAt": "2026-10-22T04:59:33.077Z",
+    "syncedAt": "2026-10-22T10:00:55.381Z",
     "error": null
   }
 }
