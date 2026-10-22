@@ -13,22 +13,9 @@
   },
   "gcal": {
     "tasks": [],
-    "events": [
-      {
-        "time": "11:00",
-        "label": "Book tooth appointment",
-        "startMs": 1792656000000,
-        "endMs": 1792659600000
-      },
-      {
-        "time": "12:30",
-        "label": "Untitled",
-        "startMs": 1792661400000,
-        "endMs": 1792665000000
-      }
-    ],
+    "events": [],
     "upcoming": [],
-    "syncedAt": "2026-10-22T19:15:06.648Z",
+    "syncedAt": "2026-10-22T22:25:23.716Z",
     "error": null
   }
 }
