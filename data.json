@@ -17,14 +17,14 @@
     "upcoming": [
       {
         "title": "Prozac last day refill",
-        "inDays": 6
+        "inDays": 5
       },
       {
         "title": "REFILL - triptizol",
-        "inDays": 6
+        "inDays": 5
       }
     ],
-    "syncedAt": "2026-11-02T02:40:40.107Z",
+    "syncedAt": "2026-11-02T10:03:23.547Z",
     "error": null
   }
 }
