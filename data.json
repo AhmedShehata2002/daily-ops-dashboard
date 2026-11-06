@@ -14,17 +14,8 @@
   "gcal": {
     "tasks": [],
     "events": [],
-    "upcoming": [
-      {
-        "title": "Prozac last day refill",
-        "inDays": 1
-      },
-      {
-        "title": "REFILL - triptizol",
-        "inDays": 1
-      }
-    ],
-    "syncedAt": "2026-11-06T11:35:56.772Z",
+    "upcoming": [],
+    "syncedAt": "2026-11-06T18:25:30.484Z",
     "error": null
   }
 }
